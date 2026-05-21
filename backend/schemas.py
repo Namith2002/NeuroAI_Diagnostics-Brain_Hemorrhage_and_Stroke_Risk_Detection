@@ -17,6 +17,8 @@ class UserLogin(BaseModel):
 class UserOut(UserBase):
     id: int
     role: str
+    is_emergency_account: bool
+    emergency_created_at: Optional[datetime]
     created_at: datetime
 
     class Config:
@@ -40,7 +42,16 @@ class ReportBase(BaseModel):
     confidence: float
     hemorrhage_percentage: float
     stroke_risk: float
+    epilepsy_risk: float
     risk_level: str
+    hemorrhage_location: Optional[str] = None
+    location_confidence: Optional[float] = None
+    dataset_source: str = "real-time"
+    model_accuracy: Optional[float] = None
+    is_emergency: bool = False
+    first_aid_needed: bool = False
+    first_aid_recommendations: Optional[str] = None
+    hemorrhage_distribution: Optional[str] = None
 
 class ReportCreate(ReportBase):
     user_id: int
@@ -68,3 +79,5 @@ class SystemStats(BaseModel):
     high_risk_count: int
     average_confidence: float
     average_severity: float
+    emergency_scans_count: int
+    stroke_epilepsy_correlation: float

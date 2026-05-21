@@ -26,6 +26,23 @@ async def lifespan(app: FastAPI):
     print("[Lifespan Startup] Compiling SQLite schemas...")
     database.Base.metadata.create_all(bind=database.engine)
     
+    # Migrate existing tables if they lack columns (e.g. from older schema versions)
+    from sqlalchemy import inspect, text
+    try:
+        inspector = inspect(database.engine)
+        if inspector.has_table('users'):
+            columns = [col['name'] for col in inspector.get_columns('users')]
+            with database.engine.begin() as conn:
+                if 'is_emergency_account' not in columns:
+                    print("[Lifespan Startup] Migration: Adding is_emergency_account column to users table...")
+                    conn.execute(text("ALTER TABLE users ADD COLUMN is_emergency_account BOOLEAN DEFAULT 0 NOT NULL"))
+                if 'emergency_created_at' not in columns:
+                    print("[Lifespan Startup] Migration: Adding emergency_created_at column to users table...")
+                    conn.execute(text("ALTER TABLE users ADD COLUMN emergency_created_at DATETIME"))
+        print("[Lifespan Startup] SQLite schema verification/migration complete.")
+    except Exception as mig_err:
+        print(f"[Lifespan Startup] Warning: Database schema migration encountered an error: {mig_err}")
+    
     # 2. Seed default admin account
     db = database.SessionLocal()
     try:
@@ -63,9 +80,13 @@ app = FastAPI(
 
 # Configure Cross-Origin Resource Sharing (CORS)
 # Allows the React frontend running on Vite/default ports to make API requests
+# We must specify explicit origins since allow_credentials=True is enabled.
+allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+origins = [origin.strip() for origin in allowed_origins_str.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this to specific frontend origins
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

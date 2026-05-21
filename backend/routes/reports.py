@@ -2,7 +2,7 @@ import os
 import uuid
 import shutil
 import json
-from typing import List
+from typing import List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session
@@ -14,6 +14,7 @@ import schemas
 import auth
 from services.ai_inference import analyze_brain_scan
 from services.pdf_generator import generate_pdf_report
+from services.documentation import get_awareness_document, get_all_available_documents, generate_first_aid_quick_reference
 
 router = APIRouter(prefix="/api/reports", tags=["Reports & Diagnostics"])
 
@@ -25,7 +26,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(HEATMAP_DIR, exist_ok=True)
 
 # Image upload validation rules
-ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg"}
+ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".webp"}
 MAX_FILE_SIZE = 10 * 1024 * 1024 # 10 MB
 
 @router.post("/analyze", response_model=schemas.ReportOut)
@@ -46,7 +47,7 @@ def analyze_scan(
     if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Unsupported file format. Please upload standard scan formats: PNG, JPG, or JPEG."
+            detail=f"Unsupported file format. Please upload standard scan formats: PNG, JPG, JPEG, BMP, or WebP."
         )
         
     # Check file size (Read chunk)
@@ -105,7 +106,16 @@ def analyze_scan(
         confidence=metrics["confidence"],
         hemorrhage_percentage=metrics["hemorrhage_percentage"],
         stroke_risk=metrics["stroke_risk"],
-        risk_level=metrics["risk_level"]
+        epilepsy_risk=metrics["epilepsy_risk"],
+        risk_level=metrics["risk_level"],
+        hemorrhage_location=metrics.get("hemorrhage_location", "N/A"),
+        location_confidence=metrics.get("location_confidence", 0.0),
+        dataset_source=metrics.get("dataset_source", "real-time"),
+        model_accuracy=metrics.get("model_accuracy", metrics["confidence"]),
+        is_emergency=metrics.get("is_emergency", False),
+        first_aid_needed=metrics.get("first_aid_needed", False),
+        first_aid_recommendations=metrics.get("first_aid_recommendations", ""),
+        hemorrhage_distribution=metrics.get("hemorrhage_distribution", "{}")
     )
     
     db.add(new_report)
@@ -263,6 +273,8 @@ def export_user_history_data(
             "confidence_score": r.confidence,
             "hemorrhage_severity_index": r.hemorrhage_percentage,
             "stroke_risk_percentage": r.stroke_risk,
+            "epilepsy_risk_percentage": r.epilepsy_risk,
+            "hemorrhage_location": r.hemorrhage_location,
             "risk_level": r.risk_level,
             "analysis_timestamp": r.created_at.strftime('%Y-%m-%d %H:%M:%S UTC'),
             "image_uri": r.image_path,
@@ -275,4 +287,85 @@ def export_user_history_data(
         BytesIO(json_data.encode()),
         media_type="application/json",
         headers={"Content-Disposition": f"attachment; filename=neuroai_export_{current_user.id}.json"}
+    )
+
+# ============================================================================
+# AWARENESS DOCUMENTATION & EDUCATION ENDPOINTS
+# ============================================================================
+
+@router.get("/documentation/available")
+def get_available_awareness_documents():
+    """
+    Returns list of all available awareness and educational documents.
+    """
+    documents = get_all_available_documents()
+    return {
+        "available_documents": documents,
+        "total": len(documents),
+        "description": "Educational materials for patient and clinician awareness"
+    }
+
+@router.get("/documentation/{doc_type}")
+def get_awareness_document_content(doc_type: str):
+    """
+    Retrieves full content of a specific awareness document.
+    Available types: brain_hemorrhage_basics, stroke_epilepsy_connection, 
+                   emergency_care_guide, patient_recovery_guide
+    """
+    doc = get_awareness_document(doc_type)
+    if doc.get("title") == "Document Not Found":
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Document type '{doc_type}' not found. Available types: brain_hemorrhage_basics, stroke_epilepsy_connection, emergency_care_guide, patient_recovery_guide"
+        )
+    return doc
+
+@router.get("/documentation/{doc_type}/download")
+def download_awareness_document(doc_type: str):
+    """
+    Downloads awareness document as a text file (.txt).
+    """
+    doc = get_awareness_document(doc_type)
+    if doc.get("title") == "Document Not Found":
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Document type '{doc_type}' not found."
+        )
+    
+    # Create text content
+    content = f"{doc['title']}\n" + "="*60 + "\n\n" + doc['content']
+    
+    filename = f"NeuroAI_{doc_type}_{uuid.uuid4().hex[:6]}.txt"
+    
+    return StreamingResponse(
+        BytesIO(content.encode()),
+        media_type="text/plain",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+@router.get("/documentation/quick-reference/first-aid")
+def get_first_aid_quick_reference():
+    """
+    Returns a quick reference card for first-aid emergency response.
+    Includes F.A.S.T. protocol and immediate action steps.
+    """
+    reference = generate_first_aid_quick_reference()
+    return {
+        "title": "Emergency First-Aid Quick Reference",
+        "content": reference,
+        "format": "text"
+    }
+
+@router.get("/documentation/quick-reference/first-aid/download")
+def download_first_aid_quick_reference():
+    """
+    Downloads quick reference card as a text file.
+    """
+    reference = generate_first_aid_quick_reference()
+    filename = f"FirstAid_QuickReference_{uuid.uuid4().hex[:6]}.txt"
+    
+    return StreamingResponse(
+        BytesIO(reference.encode()),
+        media_type="text/plain",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
     )

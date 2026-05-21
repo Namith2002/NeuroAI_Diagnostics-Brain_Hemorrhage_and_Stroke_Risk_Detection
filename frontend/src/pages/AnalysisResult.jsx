@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import MedicalDisclaimer from '../components/MedicalDisclaimer';
+import BrainRegionMap from '../components/BrainRegionMap';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { MdDownload, MdDelete, MdArrowBack, MdAnalytics, MdZoomIn } from 'react-icons/md';
@@ -169,48 +170,113 @@ const AnalysisResult = () => {
             </p>
           </div>
 
-          {/* Metrics summary grid */}
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Enhanced Metrics summary grid */}
+          <div className="grid md:grid-cols-4 gap-4">
             
             <div className="p-5 rounded-2xl glass-panel border-panelBorder flex flex-col gap-1.5">
               <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest leading-none">AI Confidence Score</span>
               <span className="text-3xl font-extrabold text-white mt-1 leading-none">{report.confidence}%</span>
-              <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-wider mt-1.5 leading-none">Statistical precision math</span>
+              <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-wider mt-1.5 leading-none">Statistical precision</span>
             </div>
 
             <div className="p-5 rounded-2xl glass-panel border-panelBorder flex flex-col gap-1.5">
-              <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest leading-none">Hematoma Severity Index</span>
+              <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest leading-none">Hemorrhage Severity</span>
               <span className="text-3xl font-extrabold text-white mt-1 leading-none">
                 {isHemorrhage ? `${report.hemorrhage_percentage}%` : '0.00%'}
               </span>
-              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1.5 leading-none">Affected brain tissue ratio</span>
+              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1.5 leading-none">Affected tissue ratio</span>
             </div>
 
-            <div className="p-5 rounded-2xl glass-panel border-panelBorder flex flex-col gap-2">
-              <div className="flex justify-between items-center leading-none">
-                <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest">Stroke Risk Probability</span>
-                <span className={`text-[10px] font-extrabold uppercase ${
-                  report.risk_level === 'High' ? 'text-accentRed' : report.risk_level === 'Moderate' ? 'text-amber-400' : 'text-accentGreen'
-                }`}>
-                  {report.risk_level} Risk
-                </span>
-              </div>
-              <span className="text-3xl font-extrabold text-white leading-none mt-0.5">{report.stroke_risk}%</span>
-              <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-panelBorder/30 mt-1">
-                <div 
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    report.risk_level === 'High' 
-                      ? 'bg-accentRed shadow-[0_0_8px_#ff1744]' 
-                      : report.risk_level === 'Moderate' 
-                        ? 'bg-amber-400 shadow-[0_0_8px_#fbbf24]' 
-                        : 'bg-accentGreen shadow-[0_0_8px_#00e676]'
-                  }`}
-                  style={{ width: `${report.stroke_risk}%` }}
-                ></div>
-              </div>
+            <div className="p-5 rounded-2xl glass-panel border-panelBorder flex flex-col gap-1.5">
+              <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest leading-none">Stroke Risk</span>
+              <span className="text-3xl font-extrabold text-white mt-1 leading-none">{report.stroke_risk}%</span>
+              <span className={`text-[9px] font-extrabold uppercase ${
+                report.risk_level === 'High' ? 'text-accentRed' : report.risk_level === 'Moderate' ? 'text-amber-400' : 'text-accentGreen'
+              }`}>
+                {report.risk_level} Risk Level
+              </span>
+            </div>
+
+            <div className="p-5 rounded-2xl glass-panel border-panelBorder flex flex-col gap-1.5">
+              <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest leading-none">Epilepsy Risk</span>
+              <span className="text-3xl font-extrabold text-white mt-1 leading-none">{report.epilepsy_risk}%</span>
+              <span className="text-[9px] text-purple-400 font-bold uppercase tracking-wider mt-1.5 leading-none">Seizure probability</span>
             </div>
 
           </div>
+
+          {/* Hemorrhage Location and Details */}
+          {isHemorrhage && (
+            <div className="flex flex-col gap-6">
+              <BrainRegionMap 
+                location={report.hemorrhage_location} 
+                confidence={report.location_confidence} 
+              />
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="p-5 rounded-2xl glass-panel border-panelBorder">
+                  <h3 className="text-xs font-extrabold text-white uppercase tracking-widest mb-3">Hemorrhage Location Analysis Summary</h3>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-2xl font-extrabold text-blue-400">{report.hemorrhage_location}</p>
+                      <p className="text-[9px] text-slate-400 mt-1">Brain region affected</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xl font-bold text-slate-300">{report.location_confidence * 100}%</p>
+                      <p className="text-[9px] text-slate-400 mt-1">Classification confidence</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-5 rounded-2xl glass-panel border-panelBorder">
+                  <h3 className="text-xs font-extrabold text-white uppercase tracking-widest mb-3">Dataset & Accuracy</h3>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-lg font-bold text-slate-300 capitalize">{report.dataset_source}</p>
+                      <p className="text-[9px] text-slate-400 mt-1">Data source</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xl font-bold text-green-400">{report.model_accuracy}%</p>
+                      <p className="text-[9px] text-slate-400 mt-1">Model accuracy</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Emergency Alert Banner */}
+          {report.is_emergency && (
+            <div className="p-6 rounded-2xl bg-red-950/20 border border-accentRed/50 shadow-lg shadow-accentRed/10">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl mt-1">🚨</span>
+                <div className="flex-1">
+                  <h3 className="text-lg font-extrabold text-accentRed uppercase tracking-wide">EMERGENCY - IMMEDIATE INTERVENTION REQUIRED</h3>
+                  <p className="text-slate-300 text-sm mt-2">
+                    This patient requires immediate medical attention. Critical symptoms and high-risk indicators are present.
+                    Contact emergency services immediately.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* First-Aid Recommendations Section */}
+          {report.first_aid_needed && report.first_aid_recommendations && (
+            <div className="p-6 rounded-2xl glass-panel border-accentRed/30 bg-red-950/10 border-2">
+              <h3 className="text-lg font-extrabold text-accentRed uppercase tracking-wide mb-4 flex items-center gap-2">
+                <span>📋</span> Emergency First-Aid Recommendations
+              </h3>
+              <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-700 max-h-96 overflow-y-auto">
+                <pre className="text-slate-200 text-sm font-mono whitespace-pre-wrap leading-relaxed">
+                  {report.first_aid_recommendations}
+                </pre>
+              </div>
+              <p className="text-[9px] text-slate-400 mt-3 font-semibold">
+                ℹ️ These recommendations are automated alerts. Always follow your medical institution's emergency protocols and consult with senior clinicians.
+              </p>
+            </div>
+          )}
 
           {/* Visual Scans Display Side-by-Side */}
           <div className="grid md:grid-cols-2 gap-8 mt-2">

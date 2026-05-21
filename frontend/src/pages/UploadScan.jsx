@@ -38,9 +38,9 @@ const UploadScan = () => {
   };
 
   const validateAndSetFile = (file) => {
-    const allowed = ['image/png', 'image/jpeg', 'image/jpg'];
+    const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/bmp', 'image/webp'];
     if (!allowed.includes(file.type)) {
-      setError("Unsupported format. Please select a PNG or JPG brain scan.");
+      setError("Unsupported format. Please select a PNG, JPG, BMP, or WebP brain scan.");
       return;
     }
 
