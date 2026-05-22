@@ -373,6 +373,7 @@ def analyze_brain_scan(image_path: str, heatmap_output_path: str) -> dict:
         prediction = "Hemorrhage Detected"
         # Confidence scales smoothly based on the intensity/size of blood pools + deep learning activation + hash variation
         confidence = 78.0 + min(21.5, (severity_percentage * 3.2) + (feature_activation_factor * 1.2) + (image_hash_val * 1.5))
+        hemorrhage_detection_score = confidence
         
         # Stroke Risk calculation (scales naturally rather than hitting 100% immediately)
         stroke_risk = 52.0 + (severity_percentage * 2.5) + (feature_activation_factor * 1.5) + (image_hash_val * 3.0)
@@ -381,6 +382,7 @@ def analyze_brain_scan(image_path: str, heatmap_output_path: str) -> dict:
         prediction = "Normal (No Hemorrhage)"
         # Confidence of being normal scales smoothly
         confidence = 82.0 + min(17.5, (5.0 - feature_activation_factor) * 2.0 + (image_hash_val * 2.5))
+        hemorrhage_detection_score = 100.0 - confidence
         
         # Stroke Risk is low, but responsive to general image texture abnormalities
         stroke_risk = 6.0 + (feature_activation_factor * 2.8) + (image_hash_val * 4.0)
@@ -431,6 +433,7 @@ def analyze_brain_scan(image_path: str, heatmap_output_path: str) -> dict:
         "stroke_risk": round(stroke_risk, 2),
         "epilepsy_risk": round(epilepsy_risk, 2),
         "risk_level": risk_level,
+        "hemorrhage_detection_score": round(hemorrhage_detection_score, 2),
         "hemorrhage_location": hemorrhage_location,
         "location_confidence": location_confidence,
         "first_aid_needed": first_aid_needed,

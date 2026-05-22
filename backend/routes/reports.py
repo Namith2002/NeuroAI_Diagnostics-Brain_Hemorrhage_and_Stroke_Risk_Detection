@@ -108,6 +108,7 @@ def analyze_scan(
         stroke_risk=metrics["stroke_risk"],
         epilepsy_risk=metrics["epilepsy_risk"],
         risk_level=metrics["risk_level"],
+        hemorrhage_detection_score=metrics.get("hemorrhage_detection_score", 0.0),
         hemorrhage_location=metrics.get("hemorrhage_location", "N/A"),
         location_confidence=metrics.get("location_confidence", 0.0),
         dataset_source=metrics.get("dataset_source", "real-time"),
@@ -276,6 +277,7 @@ def export_user_history_data(
             "epilepsy_risk_percentage": r.epilepsy_risk,
             "hemorrhage_location": r.hemorrhage_location,
             "risk_level": r.risk_level,
+            "hemorrhage_detection_score": r.hemorrhage_detection_score,
             "analysis_timestamp": r.created_at.strftime('%Y-%m-%d %H:%M:%S UTC'),
             "image_uri": r.image_path,
             "heatmap_uri": r.heatmap_path

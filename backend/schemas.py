@@ -44,6 +44,7 @@ class ReportBase(BaseModel):
     stroke_risk: float
     epilepsy_risk: float
     risk_level: str
+    hemorrhage_detection_score: Optional[float] = 0.0
     hemorrhage_location: Optional[str] = None
     location_confidence: Optional[float] = None
     dataset_source: str = "real-time"

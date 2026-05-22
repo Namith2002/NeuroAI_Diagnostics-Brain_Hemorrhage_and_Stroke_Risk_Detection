@@ -156,6 +156,12 @@ def generate_pdf_report(report, user, output_path: str):
     pdf.cell(100, 7, " AI confidence of classification based on deep network features.", border=1)
     pdf.ln()
     
+    # Hemorrhage Detection Score row
+    pdf.cell(50, 7, "Hemorrhage Detection Score", border=1, align="C")
+    pdf.cell(40, 7, f"{report.hemorrhage_detection_score or 0.0}%", border=1, align="C")
+    pdf.cell(100, 7, " Estimated likelihood/presence score of brain hemorrhage.", border=1)
+    pdf.ln()
+    
     # Severity row
     pdf.cell(50, 7, "Hemorrhage Severity Index", border=1, align="C")
     pdf.cell(40, 7, f"{report.hemorrhage_percentage}%", border=1, align="C")

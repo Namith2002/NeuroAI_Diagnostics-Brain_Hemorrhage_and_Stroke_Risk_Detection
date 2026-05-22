@@ -39,6 +39,12 @@ async def lifespan(app: FastAPI):
                 if 'emergency_created_at' not in columns:
                     print("[Lifespan Startup] Migration: Adding emergency_created_at column to users table...")
                     conn.execute(text("ALTER TABLE users ADD COLUMN emergency_created_at DATETIME"))
+        if inspector.has_table('reports'):
+            columns = [col['name'] for col in inspector.get_columns('reports')]
+            with database.engine.begin() as conn:
+                if 'hemorrhage_detection_score' not in columns:
+                    print("[Lifespan Startup] Migration: Adding hemorrhage_detection_score column to reports table...")
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN hemorrhage_detection_score FLOAT DEFAULT 0.0"))
         print("[Lifespan Startup] SQLite schema verification/migration complete.")
     except Exception as mig_err:
         print(f"[Lifespan Startup] Warning: Database schema migration encountered an error: {mig_err}")

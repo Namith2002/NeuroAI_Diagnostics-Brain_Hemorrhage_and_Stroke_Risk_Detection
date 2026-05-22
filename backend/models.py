@@ -31,6 +31,7 @@ class Report(Base):
     stroke_risk = Column(Float, nullable=False) # 0.0 to 100.0
     epilepsy_risk = Column(Float, nullable=False, default=0.0) # 0.0 to 100.0
     risk_level = Column(String, nullable=False) # "Low", "Moderate", "High"
+    hemorrhage_detection_score = Column(Float, nullable=True, default=0.0) # 0.0 to 100.0
     
     # Hemorrhage Location Classification
     hemorrhage_location = Column(String, nullable=True)  # "Frontal", "Temporal", "Parietal", "Occipital", "Cerebellum", "Brainstem", "Multiple"

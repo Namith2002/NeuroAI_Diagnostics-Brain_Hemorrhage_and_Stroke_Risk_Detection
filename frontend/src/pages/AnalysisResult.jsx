@@ -171,8 +171,16 @@ const AnalysisResult = () => {
           </div>
 
           {/* Enhanced Metrics summary grid */}
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             
+            <div className="p-5 rounded-2xl glass-panel border-panelBorder flex flex-col gap-1.5 col-span-2 md:col-span-1">
+              <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest leading-none">Hemorrhage Detection Score</span>
+              <span className="text-3xl font-extrabold text-white mt-1 leading-none">
+                {report.hemorrhage_detection_score !== undefined && report.hemorrhage_detection_score !== null ? `${report.hemorrhage_detection_score}%` : '0.00%'}
+              </span>
+              <span className="text-[9px] text-rose-400 font-bold uppercase tracking-wider mt-1.5 leading-none">Hemorrhage Probability</span>
+            </div>
+
             <div className="p-5 rounded-2xl glass-panel border-panelBorder flex flex-col gap-1.5">
               <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest leading-none">AI Confidence Score</span>
               <span className="text-3xl font-extrabold text-white mt-1 leading-none">{report.confidence}%</span>
