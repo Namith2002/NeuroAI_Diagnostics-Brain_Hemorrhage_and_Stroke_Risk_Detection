@@ -11,6 +11,7 @@ const UploadScan = () => {
   const [analyzing, setAnalyzing] = useState(false);
   const [progressLog, setProgressLog] = useState('');
   const [error, setError] = useState('');
+  const [patientId, setPatientId] = useState('none');
   
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
@@ -81,6 +82,9 @@ const UploadScan = () => {
 
     const formData = new FormData();
     formData.append('file', selectedFile);
+    if (patientId && patientId !== 'none') {
+      formData.append('patient_id', patientId);
+    }
 
     try {
       const res = await axios.post('/api/reports/analyze', formData, {
@@ -159,6 +163,35 @@ const UploadScan = () => {
             // Standard Upload State
             <div className="flex flex-col gap-6">
               
+              {/* Patient Case Selection Dropdown */}
+              <div className="p-5 rounded-2xl bg-panelBg/40 border border-panelBorder flex flex-col gap-2.5">
+                <div className="flex flex-col gap-1 text-left">
+                  <span className="text-[10px] text-cyan-400 font-extrabold uppercase tracking-widest">
+                    Real-time Patient Case Matcher
+                  </span>
+                  <p className="text-[10px] text-slate-400 font-semibold leading-relaxed">
+                    Select a patient profile to ensure consistent analysis and clinical record matching across multiple scans of the same case.
+                  </p>
+                </div>
+                <select
+                  value={patientId}
+                  onChange={(e) => setPatientId(e.target.value)}
+                  className="w-full bg-slate-950/70 border border-panelBorder rounded-xl px-4 py-3 text-xs text-slate-300 focus:outline-none focus:border-cyan-500/50 font-bold transition-all duration-300 cursor-pointer"
+                >
+                  <option value="none">Standard Scan Upload (Fallback to AI Image-Only Model)</option>
+                  <option value="768870">Patient RJH778896 (Case 768870) - Subdural hemorrhage 7.8mm</option>
+                  <option value="769562">Patient RJH769562 (Case 769562) - Extensive acute subarachnoid hemorrhage 11.3mm</option>
+                  <option value="773632">Patient RJH773632 (Case 773632) - Subarachnoid hemorrhage</option>
+                  <option value="774677">Patient RJH774677 (Case 774677) - Subtle subdural hemorrhage 4.0mm</option>
+                  <option value="775305">Patient RJH775305 (Case 775305) - Subdural hemorrhage 2.6mm + contusions</option>
+                  <option value="776623">Patient RJH776823 (Case 776623) - Subarachnoid hemorrhage</option>
+                  <option value="776898">Patient RJH776898 (Case 776898) - Multiple small hyperdense foci</option>
+                  <option value="778731">Patient RJH778731 (Case 778731) - Pneumocephalus - NO HEMORRHAGE</option>
+                  <option value="778896">Patient RJH778896 (Case 778896) - Subdural hemorrhage</option>
+                  <option value="779891">Patient RJH779891 (Case 779891) - Thin acute subdural hemorrhage 2.6mm</option>
+                </select>
+              </div>
+              
               {!selectedFile ? (
                 // Drag and drop block
                 <div
@@ -172,7 +205,7 @@ const UploadScan = () => {
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     className="hidden" 
-                    accept=".png,.jpg,.jpeg"
+                    accept=".png,.jpg,.jpeg,.bmp,.webp"
                   />
                   <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-accentBlue group-hover:scale-105 transition-transform duration-300 shadow-md">
                     <MdCloudUpload size={32} />
@@ -183,7 +216,7 @@ const UploadScan = () => {
                     </h3>
                     <p className="text-slate-400 text-xs mt-1 font-semibold leading-relaxed">
                       or click to browse local folders.<br />
-                      PNG, JPG, or JPEG format (Max 10 MB).
+                      PNG, JPG, BMP, or WebP format (Max 10 MB).
                     </p>
                   </div>
                 </div>

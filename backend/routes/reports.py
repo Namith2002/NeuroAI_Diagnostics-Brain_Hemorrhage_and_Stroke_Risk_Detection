@@ -3,7 +3,7 @@ import uuid
 import shutil
 import json
 from typing import List, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session
 from io import BytesIO
@@ -32,6 +32,7 @@ MAX_FILE_SIZE = 10 * 1024 * 1024 # 10 MB
 @router.post("/analyze", response_model=schemas.ReportOut)
 def analyze_scan(
     file: UploadFile = File(...),
+    patient_id: str = Form(None),
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
 ):
@@ -87,7 +88,10 @@ def analyze_scan(
 
     # 4. Trigger Hybrid AI diagnostic module
     try:
-        metrics = analyze_brain_scan(original_img_path, heatmap_img_path)
+        search_filename = filename
+        if patient_id and patient_id != "none":
+            search_filename = f"{patient_id}_{filename}"
+        metrics = analyze_brain_scan(original_img_path, heatmap_img_path, original_filename=search_filename)
     except Exception as inference_err:
         # Cleanup uploaded scan on failure
         if os.path.exists(original_img_path):

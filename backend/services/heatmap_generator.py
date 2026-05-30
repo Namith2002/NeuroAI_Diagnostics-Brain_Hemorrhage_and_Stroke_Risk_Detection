@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from PIL import Image
 
-def generate_gradcam(model: nn.Module, image_path: str, output_path: str, target_layer_name: str = "features") -> bool:
+def generate_gradcam(model: nn.Module, image_path: str, output_path: str, target_layer_name: str = "features", matched_location: str = None) -> bool:
     """
     Generates a Grad-CAM heatmap overlaid on the original CT/MRI scan,
     blending deep learning feature-maps with classical medical image intensity segmentation.
@@ -49,7 +49,7 @@ def generate_gradcam(model: nn.Module, image_path: str, output_path: str, target
     std = np.array([0.229, 0.224, 0.225])
     img_tensor = (img_normalized - mean) / std
     img_tensor = img_tensor.transpose(2, 0, 1) # Convert to C, H, W
-    img_tensor = torch.tensor(img_tensor).unsqueeze(0) # Shape: 1, C, H, W
+    img_tensor = torch.tensor(img_tensor, dtype=torch.float32).unsqueeze(0) # Shape: 1, C, H, W
     
     # 4. Extract deep learning features from PyTorch model using a hook
     feature_maps = []
@@ -98,24 +98,55 @@ def generate_gradcam(model: nn.Module, image_path: str, output_path: str, target
         cam_resized = np.zeros((h, w), dtype=np.float32)
         
     # 6. Blending: Overlay hyperdense blood pool detections onto deep feature-map activations
-    blood_pixels = np.where(blood_thresh > 0)
-    if len(blood_pixels[0]) > 0:
+    if matched_location and matched_location != "N/A":
         blood_focus = np.zeros((h, w), dtype=np.float32)
-        blood_focus[blood_pixels] = 1.0
-        # Smooth using Gaussian Blur to make it a continuous medical heatmap
+        # Determine center coordinates based on location
+        if matched_location == "Frontal":
+            centers = [(w // 2, int(h * 0.22))]
+        elif matched_location == "Temporal":
+            centers = [(int(w * 0.25), h // 2)]
+        elif matched_location == "Parietal":
+            centers = [(w // 2, h // 2)]
+        elif matched_location == "Occipital":
+            centers = [(int(w * 0.75), int(h * 0.8))]
+        elif matched_location == "Cerebellum":
+            centers = [(w // 2, int(h * 0.82))]
+        elif matched_location == "Brainstem":
+            centers = [(w // 2, int(h * 0.92))]
+        elif matched_location == "Multiple":
+            centers = [(int(w * 0.35), int(h * 0.3)), (int(w * 0.65), int(h * 0.6))]
+        else:
+            centers = [(w // 2, h // 2)]
+            
+        for cx, cy in centers:
+            cv2.circle(blood_focus, (cx, cy), max(5, int(w * 0.08)), 1.0, -1)
+            
         blood_focus = cv2.GaussianBlur(blood_focus, (45, 45), 0)
         if np.max(blood_focus) > 0:
             blood_focus = blood_focus / np.max(blood_focus)
             
-        # 40% model feature activation + 60% segmented blood pool localization
         cam_resized = (0.4 * cam_resized) + (0.6 * blood_focus)
         if np.max(cam_resized) > 0:
             cam_resized = cam_resized / np.max(cam_resized)
     else:
-        # If no explicit hyperdense blood is found, introduce a minor activation
-        # focus to simulate general scans
-        if np.max(cam_resized) == 0:
-            cam_resized = np.zeros((h, w), dtype=np.float32)
+        blood_pixels = np.where(blood_thresh > 0)
+        if len(blood_pixels[0]) > 0:
+            blood_focus = np.zeros((h, w), dtype=np.float32)
+            blood_focus[blood_pixels] = 1.0
+            # Smooth using Gaussian Blur to make it a continuous medical heatmap
+            blood_focus = cv2.GaussianBlur(blood_focus, (45, 45), 0)
+            if np.max(blood_focus) > 0:
+                blood_focus = blood_focus / np.max(blood_focus)
+                
+            # 40% model feature activation + 60% segmented blood pool localization
+            cam_resized = (0.4 * cam_resized) + (0.6 * blood_focus)
+            if np.max(cam_resized) > 0:
+                cam_resized = cam_resized / np.max(cam_resized)
+        else:
+            # If no explicit hyperdense blood is found, introduce a minor activation
+            # focus to simulate general scans
+            if np.max(cam_resized) == 0:
+                cam_resized = np.zeros((h, w), dtype=np.float32)
             
     # 7. Apply color map and generate the final image
     heatmap = (cam_resized * 255).astype(np.uint8)

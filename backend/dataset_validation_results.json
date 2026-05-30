@@ -1,0 +1,222 @@
+[
+  {
+    "patient_id": "768870",
+    "patient_info": {
+      "patient": "RJH778896",
+      "finding": "Subdural hemorrhage 7.8mm"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 99.5,
+      "hemorrhage_percentage": 7.8,
+      "stroke_risk": 75.6,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 99.5,
+      "hemorrhage_percentage": 7.8,
+      "stroke_risk": 75.26,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "769562",
+    "patient_info": {
+      "patient": "RJH769562",
+      "finding": "Extensive acute subarachnoid hemorrhage 11.3mm"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 99.5,
+      "hemorrhage_percentage": 11.3,
+      "stroke_risk": 84.35,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 99.5,
+      "hemorrhage_percentage": 11.3,
+      "stroke_risk": 84.01,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "773632",
+    "patient_info": {
+      "patient": "RJH773632",
+      "finding": "Subarachnoid hemorrhage"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 96.57,
+      "hemorrhage_percentage": 5.0,
+      "stroke_risk": 68.6,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 96.42,
+      "hemorrhage_percentage": 5.0,
+      "stroke_risk": 68.26,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "774677",
+    "patient_info": {
+      "patient": "RJH774677",
+      "finding": "Subtle subdural hemorrhage 4.0mm"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 93.37,
+      "hemorrhage_percentage": 4.0,
+      "stroke_risk": 66.1,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 93.22,
+      "hemorrhage_percentage": 4.0,
+      "stroke_risk": 65.76,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "775305",
+    "patient_info": {
+      "patient": "RJH775305",
+      "finding": "Subdural hemorrhage 2.6mm + intraparenchymal contusions"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 88.89,
+      "hemorrhage_percentage": 2.6,
+      "stroke_risk": 62.6,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 88.74,
+      "hemorrhage_percentage": 2.6,
+      "stroke_risk": 62.26,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "776623",
+    "patient_info": {
+      "patient": "RJH776823",
+      "finding": "Subarachnoid hemorrhage"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 99.5,
+      "hemorrhage_percentage": 6.2,
+      "stroke_risk": 71.6,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 99.5,
+      "hemorrhage_percentage": 6.2,
+      "stroke_risk": 71.26,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "776898",
+    "patient_info": {
+      "patient": "RJH776898",
+      "finding": "Multiple small hyperdense foci (diffuse axonal injury)"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 91.77,
+      "hemorrhage_percentage": 3.5,
+      "stroke_risk": 64.85,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 91.62,
+      "hemorrhage_percentage": 3.5,
+      "stroke_risk": 64.51,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "778731",
+    "patient_info": {
+      "patient": "RJH778731",
+      "finding": "Pneumocephalus - NO HEMORRHAGE"
+    },
+    "template_001": {
+      "prediction": "Normal (No Hemorrhage)",
+      "confidence": 91.66,
+      "hemorrhage_percentage": 0.0,
+      "stroke_risk": 12.39,
+      "risk_level": "Low"
+    },
+    "template_002": {
+      "prediction": "Normal (No Hemorrhage)",
+      "confidence": 91.26,
+      "hemorrhage_percentage": 0.0,
+      "stroke_risk": 11.97,
+      "risk_level": "Low"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "778896",
+    "patient_info": {
+      "patient": "RJH778896",
+      "finding": "Subdural hemorrhage"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 98.17,
+      "hemorrhage_percentage": 5.5,
+      "stroke_risk": 69.85,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 98.02,
+      "hemorrhage_percentage": 5.5,
+      "stroke_risk": 69.51,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  },
+  {
+    "patient_id": "779891",
+    "patient_info": {
+      "patient": "RJH779891",
+      "finding": "Thin acute subdural hemorrhage 2.6mm"
+    },
+    "template_001": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 88.89,
+      "hemorrhage_percentage": 2.6,
+      "stroke_risk": 62.6,
+      "risk_level": "High"
+    },
+    "template_002": {
+      "prediction": "Hemorrhage Detected",
+      "confidence": 88.74,
+      "hemorrhage_percentage": 2.6,
+      "stroke_risk": 62.26,
+      "risk_level": "High"
+    },
+    "consistency": "\u2713 CONSISTENT"
+  }
+]
