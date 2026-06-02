@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: neuroai_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_uploads:/app/uploads
+      - backend_heatmaps:/app/heatmaps
+      - backend_database:/app/database
+    environment:
+      - DATABASE_URL=sqlite:///./database/brain_hemorrhage.db
+      - SECRET_KEY=9a15f02c61e411b7a6358dbb2671ea86c2e391b1a7cfd5180f68d99c7595e86d
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=1440
+      - UPLOAD_DIR=./uploads
+      - HEATMAP_DIR=./heatmaps
+      - ALLOWED_ORIGINS=*
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=/api
+    container_name: neuroai_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  backend_uploads:
+  backend_heatmaps:
+  backend_database:

@@ -9,7 +9,10 @@ import {
   MdPerson, 
   MdAdminPanelSettings, 
   MdLogout,
-  MdHealing
+  MdHealing,
+  MdBook,
+  MdShowChart,
+  MdFlashOn
 } from 'react-icons/md';
 
 const Sidebar = () => {
@@ -27,6 +30,8 @@ const Sidebar = () => {
     { name: 'Upload Scan', path: '/upload-scan', icon: <MdCloudUpload size={19} /> },
     { name: 'Scan History', path: '/history', icon: <MdHistory size={19} /> },
     { name: 'Analytics Suite', path: '/analytics', icon: <MdAnalytics size={19} /> },
+    { name: 'Epilepsy Predictor', path: '/epilepsy-prediction', icon: <MdFlashOn size={19} /> },
+    { name: 'Educational Hub', path: '/documentation', icon: <MdBook size={19} /> },
     { name: 'Profile Account', path: '/profile', icon: <MdPerson size={19} /> },
   ];
 
@@ -37,7 +42,13 @@ const Sidebar = () => {
       path: '/admin', 
       icon: <MdAdminPanelSettings size={19} className="text-cyan-400" /> 
     });
+    navItems.push({ 
+      name: 'Graph Analytics', 
+      path: '/graph-analytics', 
+      icon: <MdShowChart size={19} className="text-cyan-400" /> 
+    });
   }
+
 
   return (
     <aside className="w-64 min-h-screen bg-panelBg border-r border-panelBorder flex flex-col justify-between p-6 shrink-0 relative z-10">
@@ -49,8 +60,8 @@ const Sidebar = () => {
             <MdHealing size={21} className="text-white" />
           </div>
           <div>
-            <h2 className="font-extrabold text-white text-md tracking-wider leading-none">NEUROAI</h2>
-            <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-widest leading-none mt-1 block">DIAGNOSTICS</span>
+            <h2 className="font-extrabold text-white text-xs tracking-wider leading-none">COMPREHENSIVE BRAIN CT</h2>
+            <span className="text-[8px] text-cyan-400 font-bold uppercase tracking-widest leading-none mt-1 block">ANALYSIS SYSTEM</span>
           </div>
         </div>
 

@@ -19,7 +19,7 @@ const About = () => {
             System Architecture & Logic
           </h1>
           <p className="text-slate-400 text-sm leading-relaxed max-w-xl">
-            Learn about the software stack, diagnostic pipelines, deep-learning models, and medical equations powering the NeuroAI diagnostic portal.
+            Learn about the software stack, diagnostic pipelines, deep-learning models, and medical equations powering the Comprehensive Brain CT Analysis System.
           </p>
         </div>
 
@@ -133,7 +133,7 @@ const About = () => {
       </main>
 
       <footer className="border-t border-panelBorder/20 py-8 bg-darkBg text-center text-slate-500 text-xs font-semibold tracking-wider relative z-10">
-        <p>&copy; {new Date().getFullYear()} NEUROAI DIAGNOSTICS GROUP INC. ALL RIGHTS RESERVED. FOR DEMONSTRATIVE SUPPORT USE ONLY.</p>
+        <p>&copy; {new Date().getFullYear()} COMPREHENSIVE BRAIN CT ANALYSIS SYSTEM. ALL RIGHTS RESERVED. FOR DEMONSTRATIVE SUPPORT USE ONLY.</p>
       </footer>
     </div>
   );

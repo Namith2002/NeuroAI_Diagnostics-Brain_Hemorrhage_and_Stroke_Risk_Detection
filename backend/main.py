@@ -45,6 +45,110 @@ async def lifespan(app: FastAPI):
                 if 'hemorrhage_detection_score' not in columns:
                     print("[Lifespan Startup] Migration: Adding hemorrhage_detection_score column to reports table...")
                     conn.execute(text("ALTER TABLE reports ADD COLUMN hemorrhage_detection_score FLOAT DEFAULT 0.0"))
+                if 'cortical_involvement' not in columns:
+                    print("[Lifespan Startup] Migration: Adding cortical_involvement column to reports table...")
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN cortical_involvement BOOLEAN DEFAULT 0 NOT NULL"))
+                if 'hemorrhage_volume' not in columns:
+                    print("[Lifespan Startup] Migration: Adding hemorrhage_volume column to reports table...")
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN hemorrhage_volume FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'midline_shift' not in columns:
+                    print("[Lifespan Startup] Migration: Adding midline_shift column to reports table...")
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN midline_shift FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'early_seizure_risk' not in columns:
+                    print("[Lifespan Startup] Migration: Adding early_seizure_risk column to reports table...")
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN early_seizure_risk FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'late_epilepsy_risk' not in columns:
+                    print("[Lifespan Startup] Migration: Adding late_epilepsy_risk column to reports table...")
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN late_epilepsy_risk FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'patient_age' not in columns:
+                    print("[Lifespan Startup] Migration: Adding patient_age column to reports table...")
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN patient_age INTEGER DEFAULT 45 NOT NULL"))
+                
+                # Multi-Label
+                if 'prob_edh' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN prob_edh FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'prob_sdh' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN prob_sdh FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'prob_sah' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN prob_sah FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'prob_iph' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN prob_iph FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'prob_ivh' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN prob_ivh FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'primary_diagnosis' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN primary_diagnosis VARCHAR(100)"))
+                if 'secondary_diagnosis' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN secondary_diagnosis VARCHAR(100)"))
+                if 'multilabel_matrix' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN multilabel_matrix TEXT"))
+                
+                # Region Localization
+                if 'affected_region' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN affected_region VARCHAR(100)"))
+                if 'region_confidence' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN region_confidence FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'region_percentage' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN region_percentage FLOAT DEFAULT 0.0 NOT NULL"))
+                
+                # Segmentation
+                if 'segmentation_mask_path' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN segmentation_mask_path VARCHAR(255)"))
+                if 'total_hemorrhage_area' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN total_hemorrhage_area FLOAT DEFAULT 0.0 NOT NULL"))
+                
+                # Stroke Engine
+                if 'ischemic_stroke_risk' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN ischemic_stroke_risk FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'hemorrhagic_stroke_risk' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN hemorrhagic_stroke_risk FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'recurrent_stroke_risk' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN recurrent_stroke_risk FLOAT DEFAULT 0.0 NOT NULL"))
+                if 'has_diabetes' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN has_diabetes BOOLEAN DEFAULT 0 NOT NULL"))
+                if 'has_hypertension' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN has_hypertension BOOLEAN DEFAULT 0 NOT NULL"))
+                if 'has_smoking_history' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN has_smoking_history BOOLEAN DEFAULT 0 NOT NULL"))
+                if 'blood_pressure' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN blood_pressure VARCHAR(50) DEFAULT '120/80' NOT NULL"))
+                
+                # Patient Survival
+                if 'survival_30d' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN survival_30d FLOAT DEFAULT 100.0 NOT NULL"))
+                if 'survival_1y' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN survival_1y FLOAT DEFAULT 100.0 NOT NULL"))
+                if 'gcs_score' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN gcs_score INTEGER DEFAULT 15 NOT NULL"))
+                if 'ivh_presence' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN ivh_presence BOOLEAN DEFAULT 0 NOT NULL"))
+                if 'time_to_treatment' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN time_to_treatment INTEGER DEFAULT 1 NOT NULL"))
+                
+                # Recovery
+                if 'recovery_score' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN recovery_score FLOAT DEFAULT 100.0 NOT NULL"))
+                if 'functional_independence_prob' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN functional_independence_prob FLOAT DEFAULT 100.0 NOT NULL"))
+                if 'rehabilitation_requirement' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN rehabilitation_requirement VARCHAR(100) DEFAULT 'None' NOT NULL"))
+                if 'recovery_outcome' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN recovery_outcome VARCHAR(100) DEFAULT 'Good Recovery' NOT NULL"))
+                
+                # Triage
+                if 'triage_priority' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN triage_priority INTEGER DEFAULT 4 NOT NULL"))
+                if 'triage_badge' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN triage_badge VARCHAR(50) DEFAULT 'Low' NOT NULL"))
+                if 'triage_response_time' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN triage_response_time VARCHAR(100) DEFAULT 'Routine' NOT NULL"))
+                
+                # Neurologist Validation
+                if 'doctor_approved' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN doctor_approved VARCHAR(50) DEFAULT 'pending' NOT NULL"))
+                if 'doctor_diagnosis' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN doctor_diagnosis VARCHAR(255)"))
+                if 'doctor_notes' not in columns:
+                    conn.execute(text("ALTER TABLE reports ADD COLUMN doctor_notes TEXT"))
         print("[Lifespan Startup] SQLite schema verification/migration complete.")
     except Exception as mig_err:
         print(f"[Lifespan Startup] Warning: Database schema migration encountered an error: {mig_err}")
@@ -52,34 +156,51 @@ async def lifespan(app: FastAPI):
     # 2. Seed default admin account
     db = database.SessionLocal()
     try:
-        admin_email = "admin@brainai.com"
+        # Seed user-specified admin account
+        admin_email = "admin@brainct.com"
         admin = db.query(models.User).filter(models.User.email == admin_email).first()
         if not admin:
-            print("[Lifespan Startup] Admin account not found. Seeding default administrator...")
-            hashed_pwd = auth.get_password_hash("admin123")
+            print("[Lifespan Startup] Seeding default administrator (admin@brainct.com / Admin@123)...")
+            hashed_pwd = auth.get_password_hash("Admin@123")
             default_admin = models.User(
-                name="Default Administrator",
+                name="System Administrator",
                 email=admin_email,
                 password=hashed_pwd,
                 role="admin"
             )
             db.add(default_admin)
             db.commit()
-            print("[Lifespan Startup] Admin account seeded successfully (admin@brainai.com / admin123).")
+            print("[Lifespan Startup] Default admin seeded.")
         else:
-            print("[Lifespan Startup] Admin account verified.")
+            print("[Lifespan Startup] Default admin verified.")
+
+        # Keep legacy admin for backwards compatibility
+        legacy_email = "admin@brainai.com"
+        legacy_admin = db.query(models.User).filter(models.User.email == legacy_email).first()
+        if not legacy_admin:
+            print("[Lifespan Startup] Seeding legacy administrator...")
+            hashed_pwd_legacy = auth.get_password_hash("admin123")
+            legacy_admin_user = models.User(
+                name="Default Administrator",
+                email=legacy_email,
+                password=hashed_pwd_legacy,
+                role="admin"
+            )
+            db.add(legacy_admin_user)
+            db.commit()
     except Exception as seed_err:
         print(f"[Lifespan Startup] Warning: Database seeding encountered an error: {seed_err}")
     finally:
         db.close()
+
         
     yield
     print("[Lifespan Shutdown] Closing application processes...")
 
 # Create the FastAPI instance
 app = FastAPI(
-    title="NeuroAI Diagnostic Suite API",
-    description="Full-stack AI Brain Hemorrhage Detection and Stroke Risk Prediction backend",
+    title="Comprehensive Brain CT Analysis System API",
+    description="Full-stack Automated Detection and Classification of Intracranial Hemorrhages with Integrated Clinical Risk Assessment API",
     version="1.0.0",
     lifespan=lifespan
 )

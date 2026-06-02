@@ -100,19 +100,15 @@ def generate_gradcam(model: nn.Module, image_path: str, output_path: str, target
     # 6. Blending: Overlay hyperdense blood pool detections onto deep feature-map activations
     if matched_location and matched_location != "N/A":
         blood_focus = np.zeros((h, w), dtype=np.float32)
-        # Determine center coordinates based on location
-        if matched_location == "Frontal":
-            centers = [(w // 2, int(h * 0.22))]
-        elif matched_location == "Temporal":
-            centers = [(int(w * 0.25), h // 2)]
-        elif matched_location == "Parietal":
-            centers = [(w // 2, h // 2)]
-        elif matched_location == "Occipital":
-            centers = [(int(w * 0.75), int(h * 0.8))]
-        elif matched_location == "Cerebellum":
-            centers = [(w // 2, int(h * 0.82))]
-        elif matched_location == "Brainstem":
-            centers = [(w // 2, int(h * 0.92))]
+        # Determine center coordinates based on the 4 spaces
+        if matched_location == "Epidural Hematoma":
+            centers = [(w // 2, int(h * 0.20))]
+        elif matched_location == "Subdural Hematoma":
+            centers = [(int(w * 0.35), int(h * 0.40))]
+        elif matched_location == "Subarachnoid Hemorrhage":
+            centers = [(w // 2, int(h * 0.60))]
+        elif matched_location == "Intracerebral Hemorrhage":
+            centers = [(w // 2, int(h * 0.80))]
         elif matched_location == "Multiple":
             centers = [(int(w * 0.35), int(h * 0.3)), (int(w * 0.65), int(h * 0.6))]
         else:

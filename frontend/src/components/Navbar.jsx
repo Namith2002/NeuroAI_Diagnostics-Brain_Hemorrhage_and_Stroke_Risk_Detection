@@ -16,8 +16,8 @@ const Navbar = () => {
             <MdHealing size={21} className="text-white" />
           </div>
           <div>
-            <h2 className="font-extrabold text-white text-md tracking-wider leading-none">NEUROAI</h2>
-            <span className="text-[9px] text-cyan-400 font-bold uppercase tracking-widest leading-none mt-1 block">DIAGNOSTICS</span>
+            <h2 className="font-extrabold text-white text-xs tracking-wider leading-none">COMPREHENSIVE BRAIN CT</h2>
+            <span className="text-[8px] text-cyan-400 font-bold uppercase tracking-widest leading-none mt-1 block">ANALYSIS SYSTEM</span>
           </div>
         </Link>
 
