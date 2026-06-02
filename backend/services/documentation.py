@@ -132,10 +132,10 @@ Post-stroke epilepsy occurs in 10-15% of hemorrhage survivors
 
 Geographic Risk:
 Higher epilepsy risk with hemorrhage in:
-✓ Temporal lobe (highest risk - 50%)
-✓ Frontal lobe (30-40%)
-✓ Parietal lobe (25%)
-✓ Motor cortex regions
+✓ Subarachnoid Hemorrhage (highest risk - 50%)
+✓ Intracerebral Hemorrhage (40-45%)
+✓ Subdural Hematoma (30%)
+✓ Epidural Hematoma (15%)
 
 Warning Signs - Seek Help If You Experience:
 • Recurring seizures

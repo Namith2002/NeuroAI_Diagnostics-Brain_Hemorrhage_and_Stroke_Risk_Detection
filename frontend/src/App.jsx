@@ -17,7 +17,11 @@ import Analytics from './pages/Analytics';
 import Profile from './pages/Profile';
 import History from './pages/History';
 import AdminDashboard from './pages/AdminDashboard';
+import GraphAnalytics from './pages/GraphAnalytics';
+import AwarenessDocumentation from './pages/AwarenessDocumentation';
+import EpilepsyPrediction from './pages/EpilepsyPrediction';
 import NotFound from './pages/NotFound';
+
 
 function App() {
   return (
@@ -80,6 +84,22 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/documentation" 
+            element={
+              <ProtectedRoute>
+                <AwarenessDocumentation />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/epilepsy-prediction" 
+            element={
+              <ProtectedRoute>
+                <EpilepsyPrediction />
+              </ProtectedRoute>
+            } 
+          />
 
           {/* Secure Admin Operations Dashboard */}
           <Route 
@@ -90,9 +110,18 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/graph-analytics" 
+            element={
+              <ProtectedRoute adminOnly={true}>
+                <GraphAnalytics />
+              </ProtectedRoute>
+            } 
+          />
 
           {/* Fallback 404 Route */}
           <Route path="*" element={<NotFound />} />
+
 
         </Routes>
       </Router>

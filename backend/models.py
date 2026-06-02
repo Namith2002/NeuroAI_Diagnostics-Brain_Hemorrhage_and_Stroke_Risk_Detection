@@ -34,7 +34,7 @@ class Report(Base):
     hemorrhage_detection_score = Column(Float, nullable=True, default=0.0) # 0.0 to 100.0
     
     # Hemorrhage Location Classification
-    hemorrhage_location = Column(String, nullable=True)  # "Frontal", "Temporal", "Parietal", "Occipital", "Cerebellum", "Brainstem", "Multiple"
+    hemorrhage_location = Column(String, nullable=True)  # "Epidural Hematoma", "Subdural Hematoma", "Subarachnoid Hemorrhage", "Intracerebral Hemorrhage", "Multiple"
     location_confidence = Column(Float, nullable=True, default=0.0)  # Confidence in location classification
     
     # Dataset & Accuracy Tracking
@@ -48,6 +48,80 @@ class Report(Base):
     
     # Graph & Analytics
     hemorrhage_distribution = Column(String, nullable=True)  # JSON string for pixel distribution data
+    
+    # Post-Hemorrhagic Epilepsy prediction metrics
+    cortical_involvement = Column(Boolean, default=False, nullable=False)
+    hemorrhage_volume = Column(Float, default=0.0, nullable=False) # in mL
+    midline_shift = Column(Float, default=0.0, nullable=False) # in mm
+    early_seizure_risk = Column(Float, default=0.0, nullable=False) # in %
+    late_epilepsy_risk = Column(Float, default=0.0, nullable=False) # in %
+    patient_age = Column(Integer, default=45, nullable=False)
+    
+    # 1. Multi-Label Hemorrhage Classification
+    prob_hemorrhage = Column(Float, default=0.0, nullable=False)
+    prob_edh = Column(Float, default=0.0, nullable=False)
+    prob_sdh = Column(Float, default=0.0, nullable=False)
+    prob_sah = Column(Float, default=0.0, nullable=False)
+    prob_iph = Column(Float, default=0.0, nullable=False)
+    prob_ivh = Column(Float, default=0.0, nullable=False)
+    prob_fracture = Column(Float, default=0.0, nullable=False)
+    
+    # Clinical Assessment Engine Metrics
+    idi = Column(Float, default=0.0, nullable=False)
+    her = Column(Float, default=0.0, nullable=False)
+    srs = Column(Float, default=0.0, nullable=False)
+    treatment_recommendation = Column(String, default="Routine (>24 hours)", nullable=False)
+    esi = Column(Float, default=0.0, nullable=False)
+    rcf = Column(Float, default=0.0, nullable=False)
+    hi = Column(Float, default=0.0, nullable=False)
+    sfs = Column(Float, default=0.0, nullable=False)
+    ev = Column(Float, default=0.0, nullable=False)
+    cp = Column(Float, default=0.0, nullable=False)
+    
+    primary_diagnosis = Column(String, nullable=True)
+    secondary_diagnosis = Column(String, nullable=True)
+    multilabel_matrix = Column(Text, nullable=True) # JSON string
+    
+    # 2. Brain Region Localization
+    affected_region = Column(String, nullable=True)
+    region_confidence = Column(Float, default=0.0, nullable=False)
+    region_percentage = Column(Float, default=0.0, nullable=False)
+    
+    # 3. Hemorrhage Segmentation
+    segmentation_mask_path = Column(String, nullable=True)
+    total_hemorrhage_area = Column(Float, default=0.0, nullable=False)
+    
+    # 4. Stroke Prediction Engine
+    ischemic_stroke_risk = Column(Float, default=0.0, nullable=False)
+    hemorrhagic_stroke_risk = Column(Float, default=0.0, nullable=False)
+    recurrent_stroke_risk = Column(Float, default=0.0, nullable=False)
+    has_diabetes = Column(Boolean, default=False, nullable=False)
+    has_hypertension = Column(Boolean, default=False, nullable=False)
+    has_smoking_history = Column(Boolean, default=False, nullable=False)
+    blood_pressure = Column(String, default="120/80", nullable=False)
+    
+    # 5. Patient Survival Prediction
+    survival_30d = Column(Float, default=100.0, nullable=False)
+    survival_1y = Column(Float, default=100.0, nullable=False)
+    gcs_score = Column(Integer, default=15, nullable=False)
+    ivh_presence = Column(Boolean, default=False, nullable=False)
+    time_to_treatment = Column(Integer, default=1, nullable=False)
+    
+    # 6. Recovery Prediction System
+    recovery_score = Column(Float, default=100.0, nullable=False)
+    functional_independence_prob = Column(Float, default=100.0, nullable=False)
+    rehabilitation_requirement = Column(String, default="None", nullable=False)
+    recovery_outcome = Column(String, default="Good Recovery", nullable=False)
+    
+    # 7. Hospital Triage Prioritization
+    triage_priority = Column(Integer, default=4, nullable=False)
+    triage_badge = Column(String, default="Low", nullable=False)
+    triage_response_time = Column(String, default="Routine", nullable=False)
+    
+    # 8. Neurologist Validation
+    doctor_approved = Column(String, default="pending", nullable=False) # 'pending', 'approved', 'rejected'
+    doctor_diagnosis = Column(String, nullable=True)
+    doctor_notes = Column(Text, nullable=True)
     
     created_at = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 

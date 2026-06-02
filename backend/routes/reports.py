@@ -101,7 +101,6 @@ def analyze_scan(
             detail=f"AI inference pipeline failure: {str(inference_err)}"
         )
 
-    # 5. Save report data to database using relative serving paths
     new_report = models.Report(
         user_id=current_user.id,
         image_path=f"uploads/{stored_img_name}",
@@ -120,7 +119,63 @@ def analyze_scan(
         is_emergency=metrics.get("is_emergency", False),
         first_aid_needed=metrics.get("first_aid_needed", False),
         first_aid_recommendations=metrics.get("first_aid_recommendations", ""),
-        hemorrhage_distribution=metrics.get("hemorrhage_distribution", "{}")
+        hemorrhage_distribution=metrics.get("hemorrhage_distribution", "{}"),
+        cortical_involvement=metrics.get("cortical_involvement", False),
+        hemorrhage_volume=metrics.get("hemorrhage_volume", 0.0),
+        midline_shift=metrics.get("midline_shift", 0.0),
+        early_seizure_risk=metrics.get("early_seizure_risk", 0.0),
+        late_epilepsy_risk=metrics.get("late_epilepsy_risk", 0.0),
+        patient_age=metrics.get("patient_age", 45),
+        
+        # New multi-task columns
+        prob_hemorrhage=metrics.get("prob_hemorrhage", 0.0),
+        prob_edh=metrics.get("prob_edh", 0.0),
+        prob_sdh=metrics.get("prob_sdh", 0.0),
+        prob_sah=metrics.get("prob_sah", 0.0),
+        prob_iph=metrics.get("prob_iph", 0.0),
+        prob_ivh=metrics.get("prob_ivh", 0.0),
+        prob_fracture=metrics.get("prob_fracture", 0.0),
+        
+        # Clinical Assessment Engine Columns
+        idi=metrics.get("idi", 0.0),
+        her=metrics.get("her", 0.0),
+        srs=metrics.get("srs", 0.0),
+        treatment_recommendation=metrics.get("treatment_recommendation", "Routine (>24 hours)"),
+        esi=metrics.get("esi", 0.0),
+        rcf=metrics.get("rcf", 0.0),
+        hi=metrics.get("hi", 0.0),
+        sfs=metrics.get("sfs", 0.0),
+        ev=metrics.get("ev", 0.0),
+        cp=metrics.get("cp", 0.0),
+        
+        primary_diagnosis=metrics.get("primary_diagnosis"),
+        secondary_diagnosis=metrics.get("secondary_diagnosis"),
+        multilabel_matrix=metrics.get("multilabel_matrix"),
+        affected_region=metrics.get("affected_region"),
+        region_confidence=metrics.get("region_confidence", 0.0),
+        region_percentage=metrics.get("region_percentage", 0.0),
+        segmentation_mask_path=metrics.get("segmentation_mask_path"),
+        total_hemorrhage_area=metrics.get("total_hemorrhage_area", 0.0),
+        ischemic_stroke_risk=metrics.get("ischemic_stroke_risk", 0.0),
+        hemorrhagic_stroke_risk=metrics.get("hemorrhagic_stroke_risk", 0.0),
+        recurrent_stroke_risk=metrics.get("recurrent_stroke_risk", 0.0),
+        has_diabetes=metrics.get("has_diabetes", False),
+        has_hypertension=metrics.get("has_hypertension", False),
+        has_smoking_history=metrics.get("has_smoking_history", False),
+        blood_pressure=metrics.get("blood_pressure", "120/80"),
+        survival_30d=metrics.get("survival_30d", 100.0),
+        survival_1y=metrics.get("survival_1y", 100.0),
+        gcs_score=metrics.get("gcs_score", 15),
+        ivh_presence=metrics.get("ivh_presence", False),
+        time_to_treatment=metrics.get("time_to_treatment", 1),
+        recovery_score=metrics.get("recovery_score", 100.0),
+        functional_independence_prob=metrics.get("functional_independence_prob", 100.0),
+        rehabilitation_requirement=metrics.get("rehabilitation_requirement", "None"),
+        recovery_outcome=metrics.get("recovery_outcome", "Good Recovery"),
+        triage_priority=metrics.get("triage_priority", 4),
+        triage_badge=metrics.get("triage_badge", "Low"),
+        triage_response_time=metrics.get("triage_response_time", "Routine"),
+        doctor_approved=metrics.get("doctor_approved", "pending")
     )
     
     db.add(new_report)
@@ -375,3 +430,162 @@ def download_first_aid_quick_reference():
         media_type="text/plain",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+
+@router.post("/predict-epilepsy", response_model=schemas.EpilepsyPredictionResponse)
+def predict_epilepsy_risk_endpoint(
+    req: schemas.EpilepsyPredictionRequest,
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    """
+    Predicts early seizure risk and late epilepsy risk based on clinical findings:
+    Hemorrhage Type, Cortical Involvement, Hemorrhage Volume (mL), Midline Shift (mm), and Patient Age.
+    """
+    has_bleed = req.hemorrhage_type != "None"
+    
+    # --- 1. Early Seizure Risk (within 7 days) ---
+    early_base = 0.0
+    if has_bleed:
+        if req.hemorrhage_type in ["Subarachnoid Hemorrhage", "Intracerebral Hemorrhage", "Multiple"]:
+            early_base = 15.0
+        elif req.hemorrhage_type == "Subdural Hematoma":
+            early_base = 10.0
+        else: # Epidural Hematoma
+            early_base = 5.0
+            
+    early_risk = early_base
+    if req.cortical_involvement:
+        early_risk += 20.0
+        
+    early_risk += min(25.0, req.hemorrhage_volume * 0.4)
+    early_risk += min(15.0, req.midline_shift * 1.5)
+    
+    if req.age < 18:
+        early_risk += 10.0
+    elif req.age > 65:
+        early_risk += 5.0
+        
+    early_seizure_risk = round(min(90.0, max(0.0, early_risk)), 2)
+    
+    # --- 2. Late Epilepsy Risk (after 7 days / long-term) ---
+    late_base = 0.0
+    if has_bleed:
+        if req.hemorrhage_type in ["Subarachnoid Hemorrhage", "Intracerebral Hemorrhage", "Multiple"]:
+            late_base = 20.0
+        elif req.hemorrhage_type == "Subdural Hematoma":
+            late_base = 12.0
+        else: # Epidural Hematoma
+            late_base = 4.0
+            
+    late_risk = late_base
+    if req.cortical_involvement:
+        late_risk += 25.0
+        
+    late_risk += min(30.0, req.hemorrhage_volume * 0.5)
+    late_risk += min(20.0, req.midline_shift * 2.0)
+    
+    if req.age > 65:
+        late_risk += 10.0
+        
+    late_epilepsy_risk = round(min(95.0, max(0.0, late_risk)), 2)
+    
+    # --- 3. Combined Epilepsy Probability ---
+    # Combined probability P(A or B) = P(A) + P(B) - P(A)*P(B)
+    p_early = early_seizure_risk / 100.0
+    p_late = late_epilepsy_risk / 100.0
+    p_combined = p_early + p_late - (p_early * p_late)
+    epilepsy_probability = round(p_combined * 100.0, 2)
+    
+    # --- 4. Risk Level ---
+    if epilepsy_probability >= 50.0:
+        risk_level = "High"
+    elif epilepsy_probability >= 20.0:
+        risk_level = "Moderate"
+    else:
+        risk_level = "Low"
+        
+    # Seizure prophylaxis recommended
+    seizure_prophylaxis = epilepsy_probability >= 35.0 or (req.cortical_involvement and has_bleed)
+    
+    # --- 5. Clinical Explanation ---
+    exp_parts = []
+    exp_parts.append(
+        f"The patient (Age: {req.age}) presents with a calculated overall epilepsy propensity of {epilepsy_probability}%."
+    )
+    if has_bleed:
+        exp_parts.append(
+            f"This is driven by a {req.hemorrhage_type} with an estimated volume of {req.hemorrhage_volume} mL and a midline shift of {req.midline_shift} mm."
+        )
+        if req.cortical_involvement:
+            exp_parts.append(
+                "Direct cortical involvement significantly elevates the threshold for both early spikes and late focal gliosis."
+            )
+        else:
+            exp_parts.append(
+                "No direct cortical involvement is reported, reducing the likelihood of immediate contact-driven seizure focal points."
+            )
+    else:
+        exp_parts.append("In the absence of an active intracranial bleed, the seizure probability remains low.")
+        
+    if req.midline_shift > 5.0:
+        exp_parts.append(
+            f"Significant midline shift ({req.midline_shift} mm) indicates mechanical brain herniation/shear stresses, compounding late epilepsy risks."
+        )
+    clinical_explanation = " ".join(exp_parts)
+    
+    # --- 6. Recommendations ---
+    recs = []
+    if risk_level == "High":
+        recs.append("• Initiate continuous video EEG monitoring in an ICU environment.")
+        recs.append("• Consult neuro-critical care immediately for therapeutic anti-seizure drug dosing.")
+        recs.append("• Implement comprehensive seizure safety precautions (padded rails, accessible suction).")
+    elif risk_level == "Moderate":
+        recs.append("• Recommend routine 24-hour spot EEG follow-ups.")
+        recs.append("• Active bedside observation for subclinical seizure signs (focal twitching, sudden gaze deviaton).")
+        recs.append("• Baseline neurology consultation within 24 hours.")
+    else:
+        recs.append("• Standard clinical checks. Routine anti-epileptic drug prophylaxis is not indicated.")
+        
+    if seizure_prophylaxis:
+        recs.append("• Indicated for short-term seizure prophylaxis (e.g. Levetiracetam 500mg BID for 7 days).")
+        
+    recs.append("• Maintain normothermia, normal pO2, and strict electrolyte balance (especially Na+) to optimize seizure threshold.")
+    
+    return schemas.EpilepsyPredictionResponse(
+        early_seizure_risk=early_seizure_risk,
+        late_epilepsy_risk=late_epilepsy_risk,
+        epilepsy_probability=epilepsy_probability,
+        risk_level=risk_level,
+        clinical_explanation=clinical_explanation,
+        seizure_prophylaxis_recommended=seizure_prophylaxis,
+        recommendations=recs
+    )
+
+@router.post("/validate/{report_id}")
+def validate_report(
+    report_id: int,
+    data: dict,  # Expecting approved (str: 'approved'/'rejected'), doctor_diagnosis (str), doctor_notes (str)
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(database.get_db)
+):
+    """
+    Neurologist validation of automated AI diagnosis report.
+    Allows approval/rejection and editing/overriding diagnosis.
+    """
+    report = db.query(models.Report).filter(models.Report.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Report not found")
+        
+    report.doctor_approved = data.get("approved", "approved")
+    report.doctor_diagnosis = data.get("doctor_diagnosis", report.prediction)
+    report.doctor_notes = data.get("doctor_notes", "")
+    
+    db.commit()
+    db.refresh(report)
+    return {
+        "status": "success",
+        "message": "Report validation updated",
+        "report_id": report_id,
+        "doctor_approved": report.doctor_approved,
+        "doctor_diagnosis": report.doctor_diagnosis,
+        "doctor_notes": report.doctor_notes
+    }

@@ -1,8 +1,8 @@
-# NeuroAI Project Enhancement - Implementation Summary
+# Comprehensive Brain CT Analysis System: Automated Detection and Classification of Intracranial Hemorrhages with Integrated Clinical Risk Assessment - Implementation Summary
 
 ## 🎯 Project Overview
 
-Successfully implemented comprehensive enhancements to the NeuroAI Diagnostics platform to support advanced brain hemorrhage detection, stroke-epilepsy correlation analysis, dataset accuracy comparison, emergency intervention protocols, and patient awareness documentation.
+Successfully implemented comprehensive enhancements to the Comprehensive Brain CT Analysis System to support advanced brain hemorrhage detection, stroke-epilepsy correlation analysis, dataset accuracy comparison, emergency intervention protocols, and patient awareness documentation.
 
 ---
 
@@ -10,7 +10,7 @@ Successfully implemented comprehensive enhancements to the NeuroAI Diagnostics p
 
 ### 1. **Brain Hemorrhage Location Classification**
 - **Status**: ✅ COMPLETE
-- **Location Types**: Frontal, Temporal, Parietal, Occipital, Cerebellum, Brainstem, Multiple
+- **Location Types**: Epidural Hematoma, Subdural Hematoma, Subarachnoid Hemorrhage, Intracerebral Hemorrhage, Multiple
 - **Implementation**:
   - Function: `classify_hemorrhage_location()` in `services/ai_inference.py`
   - Uses center-of-mass analysis of detected blood pixels
@@ -25,7 +25,7 @@ Successfully implemented comprehensive enhancements to the NeuroAI Diagnostics p
 - **Epilepsy Risk Calculation**:
   - Function: `calculate_epilepsy_risk()` in `services/ai_inference.py`
   - Base calculation: `severity_percentage * 0.5`
-  - Location-based multipliers (Temporal: 1.6x highest, Brainstem: 0.7x lowest)
+  - Location-based multipliers (Subarachnoid Hemorrhage: 1.6x highest, Epidural Hematoma: 1.1x lowest)
   - Stroke-epilepsy correlation factor: `stroke_risk * 0.15`
   - Result range: 5-90% (never 100%)
 - **Database Fields**: 
@@ -34,6 +34,25 @@ Successfully implemented comprehensive enhancements to the NeuroAI Diagnostics p
   - `GET /api/admin/graph-analysis/stroke-epilepsy-correlation` - Correlation data
   - Shows stroke risk categories and corresponding epilepsy risk averages
   - Identifies high-risk combinations
+
+### 2b. **Post-Hemorrhagic Epilepsy (PHE) Predictor**
+- **Status**: ✅ COMPLETE
+- **Implementation**:
+  - API Route: `POST /api/reports/predict-epilepsy`
+  - Predicts:
+    - **Early Seizure Risk** (7 Days probability based on acute cortical contact and mass effect)
+    - **Late Epilepsy Risk** (Long-term probability based on gliosis and age)
+  - Uses parameters:
+    - Hemorrhage Type (Epidural Hematoma, Subdural Hematoma, Subarachnoid Hemorrhage, Intracerebral Hemorrhage, Multiple, None)
+    - Cortical Involvement (Boolean check)
+    - Hemorrhage Volume (mL)
+    - Midline Shift (mm)
+    - Patient Age (Years)
+  - Output details: Epilepsy Probability (combined risk %), Early Seizure Risk %, Late Epilepsy Risk %, Risk Level (Low, Moderate, High), and Clinical Explanation detailing the drivers.
+- **Frontend Integration**:
+  - Standalone Route: `/epilepsy-prediction`
+  - Features: Interactive inputs (dropdown, checkbox, sliders, number inputs), live API prediction response, Recharts horizontal driver breakdown bar chart, animated gauge, separate Early/Late risk metrics, and clinical guidelines display.
+  - **Inference Result Detail Screen (`/analysis-result`)**: Integrated the interactive calculator directly below the metrics grid, prepopulating findings from the uploaded scan and letting clinicians dynamically refine the parameters to update the Early/Late seizure risks, combined probability, and driver graphs in real time.
 
 ### 3. **Dataset Accuracy Comparison (Kaggle vs Real-Time)**
 - **Status**: ✅ COMPLETE
@@ -236,16 +255,14 @@ ALTER TABLE reports ADD COLUMN hemorrhage_distribution TEXT DEFAULT '{}';
 
 ## 🧠 HEMORRHAGE LOCATION MAPPING
 
-The system maps detected hemorrhages to brain regions using center-of-mass analysis:
+The system maps detected hemorrhages to brain layers using center-of-mass analysis:
 
-| Region | Y-Position | Confidence | Notes |
+| Space | Y-Position | Confidence | Notes |
 |--------|-----------|-----------|-------|
-| Frontal | < 35% | 65-85% | Top of brain, motor area |
-| Temporal | Sides | 70-80% | Sides of brain, seizure risk |
-| Parietal | Middle | 75-85% | Central region |
-| Occipital | Back | 75% | Visual processing area |
-| Cerebellum | Bottom-center | 82% | HIGH risk for compression |
-| Brainstem | Very bottom | 80% | CRITICAL - life-threatening |
+| Epidural Hematoma | < 25% | 85% | Outermost layer, classic lucid interval |
+| Subdural Hematoma | 25% - 50% | 80% | Potential space, bridging venous tears |
+| Subarachnoid Hemorrhage | 50% - 75% | 85% | CSF space, thunderclap headache risk |
+| Intracerebral Hemorrhage | >= 75% | 90% | Deep tissue parenchyma, focal deficits |
 
 ---
 
@@ -267,7 +284,7 @@ epilepsy_risk = base_risk * location_multiplier + (stroke_risk * 0.15)
 
 Where:
 - base_risk = hemorrhage_percentage * 0.5
-- location_multiplier: Temporal (1.6) > Frontal (1.4) > Parietal (1.3) > Occipital (1.1) > Cerebellum (0.9) > Brainstem (0.7)
+- location_multiplier: Subarachnoid Hemorrhage (1.6) > Intracerebral Hemorrhage (1.5) > Subdural Hematoma (1.3) > Epidural Hematoma (1.1)
 - Final range: 5-90% (capped at 90%)
 ```
 
@@ -371,10 +388,11 @@ Where:
 - `backend/services/pdf_generator.py` - PDF generation
 - `backend/services/documentation.py` - NEW - Education materials
 - `backend/routes/auth.py` - Emergency account endpoint
-- `backend/routes/reports.py` - Documentation endpoints
+- `backend/routes/reports.py` - Documentation & prediction endpoints
 - `backend/routes/admin.py` - Analytics endpoints
 - `frontend/src/pages/GraphAnalytics.jsx` - NEW - Analytics dashboard
 - `frontend/src/pages/AwarenessDocumentation.jsx` - NEW - Documentation center
+- `frontend/src/pages/EpilepsyPrediction.jsx` - NEW - Interactive Epilepsy Predictor
 - `frontend/src/pages/AnalysisResult.jsx` - Enhanced results display
 - `frontend/src/components/EmergencyAccountModal.jsx` - NEW - Emergency UI
 

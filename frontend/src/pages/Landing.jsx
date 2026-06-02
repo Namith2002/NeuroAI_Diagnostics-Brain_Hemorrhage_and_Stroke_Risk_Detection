@@ -282,7 +282,7 @@ const Landing = () => {
             </div>
           </div>
           <div className="border-t border-panelBorder/20 pt-8 flex flex-col md:flex-row items-center justify-between">
-            <p className="text-slate-500 text-xs font-semibold tracking-wider">&copy; {new Date().getFullYear()} NEUROAI DIAGNOSTICS. ALL RIGHTS RESERVED.</p>
+            <p className="text-slate-500 text-[10px] font-semibold tracking-wider">&copy; {new Date().getFullYear()} COMPREHENSIVE BRAIN CT ANALYSIS SYSTEM. ALL RIGHTS RESERVED.</p>
             <p className="text-slate-500 text-xs mt-4 md:mt-0">FOR RESEARCH AND DEMONSTRATIVE SUPPORT USE ONLY. NOT FDA-APPROVED FOR PRIMARY DIAGNOSIS.</p>
           </div>
         </div>

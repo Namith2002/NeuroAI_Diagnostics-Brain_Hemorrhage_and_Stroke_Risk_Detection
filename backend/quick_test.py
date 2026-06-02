@@ -27,6 +27,13 @@ for patient_id, template in patients:
             print(f"  Confidence: {result['confidence']}%")
             print(f"  Hemorrhage: {result['hemorrhage_percentage']}%")
             print(f"  Risk Level: {result['risk_level']}")
+            print(f"  Multi-label Probabilities:")
+            print(f"    - Hemorrhage: {result['prob_hemorrhage']}% (Prob: {result['prob_hemorrhage']/100:.6f})")
+            print(f"    - Subarachnoid (SAH): {result['prob_sah']}% (Prob: {result['prob_sah']/100:.6f})")
+            print(f"    - Epidural (EDH): {result['prob_edh']}% (Prob: {result['prob_edh']/100:.6f})")
+            print(f"    - Intraventricular (IVH): {result['prob_ivh']}% (Prob: {result['prob_ivh']/100:.6f})")
+            print(f"    - Intraparenchymal (IPH): {result['prob_iph']}% (Prob: {result['prob_iph']/100:.6f})")
+            print(f"    - Subdural (SDH): {result['prob_sdh']}% (Prob: {result['prob_sdh']/100:.6f})")
         except Exception as e:
             print(f"  ERROR: {str(e)}")
     else:
