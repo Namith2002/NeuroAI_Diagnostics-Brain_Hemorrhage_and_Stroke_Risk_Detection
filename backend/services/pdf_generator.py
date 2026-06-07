@@ -183,6 +183,7 @@ def generate_pdf_report(report, user, output_path: str):
     pdf.cell(50, 7, " Epilepsy Risk Probability", border=1, align="L")
     pdf.cell(50, 7, f"{report.epilepsy_risk}%", border=1, align="C")
     pdf.cell(90, 7, " Post-hemorrhage seizure occurrence risk assessment.", border=1)
+<<<<<<< HEAD
     pdf.ln()
     
     # Intervention Delay Index row
@@ -207,6 +208,8 @@ def generate_pdf_report(report, user, output_path: str):
     pdf.cell(50, 7, " Seizure Risk Score (SRS)", border=1, align="L")
     pdf.cell(50, 7, f"{getattr(report, 'srs', 0.0):.4f}", border=1, align="C")
     pdf.cell(90, 7, " Estimates long-term seizure risk based on proximity and hemorrhage type.", border=1)
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
     pdf.ln()
     
     # Hemorrhage Location row

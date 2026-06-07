@@ -61,12 +61,16 @@ class ReportBase(BaseModel):
     patient_age: Optional[int] = 45
     
     # 1. Multi-Label Hemorrhage Classification
+<<<<<<< HEAD
     prob_hemorrhage: float = 0.0
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
     prob_edh: float = 0.0
     prob_sdh: float = 0.0
     prob_sah: float = 0.0
     prob_iph: float = 0.0
     prob_ivh: float = 0.0
+<<<<<<< HEAD
     prob_fracture: float = 0.0
     
     # Clinical Assessment Engine Metrics
@@ -81,6 +85,8 @@ class ReportBase(BaseModel):
     ev: float = 0.0
     cp: float = 0.0
     
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
     primary_diagnosis: Optional[str] = None
     secondary_diagnosis: Optional[str] = None
     multilabel_matrix: Optional[str] = None

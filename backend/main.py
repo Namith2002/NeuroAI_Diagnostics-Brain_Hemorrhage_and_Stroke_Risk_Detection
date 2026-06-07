@@ -65,8 +65,11 @@ async def lifespan(app: FastAPI):
                     conn.execute(text("ALTER TABLE reports ADD COLUMN patient_age INTEGER DEFAULT 45 NOT NULL"))
                 
                 # Multi-Label
+<<<<<<< HEAD
                 if 'prob_hemorrhage' not in columns:
                     conn.execute(text("ALTER TABLE reports ADD COLUMN prob_hemorrhage FLOAT DEFAULT 0.0 NOT NULL"))
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
                 if 'prob_edh' not in columns:
                     conn.execute(text("ALTER TABLE reports ADD COLUMN prob_edh FLOAT DEFAULT 0.0 NOT NULL"))
                 if 'prob_sdh' not in columns:
@@ -77,6 +80,7 @@ async def lifespan(app: FastAPI):
                     conn.execute(text("ALTER TABLE reports ADD COLUMN prob_iph FLOAT DEFAULT 0.0 NOT NULL"))
                 if 'prob_ivh' not in columns:
                     conn.execute(text("ALTER TABLE reports ADD COLUMN prob_ivh FLOAT DEFAULT 0.0 NOT NULL"))
+<<<<<<< HEAD
                 if 'prob_fracture' not in columns:
                     conn.execute(text("ALTER TABLE reports ADD COLUMN prob_fracture FLOAT DEFAULT 0.0 NOT NULL"))
                 
@@ -102,6 +106,8 @@ async def lifespan(app: FastAPI):
                 if 'cp' not in columns:
                     conn.execute(text("ALTER TABLE reports ADD COLUMN cp FLOAT DEFAULT 0.0 NOT NULL"))
                 
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
                 if 'primary_diagnosis' not in columns:
                     conn.execute(text("ALTER TABLE reports ADD COLUMN primary_diagnosis VARCHAR(100)"))
                 if 'secondary_diagnosis' not in columns:

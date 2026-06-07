@@ -50,7 +50,11 @@ const BrainRegionMap = ({ location, confidence }) => {
   const isUnknown = activeKey === 'Unknown';
 
   // Helper to determine path style for interactive overlay bleeds
+<<<<<<< HEAD
   const getBleedProps = (regionKey) => {
+=======
+  const getBleedProps = (regionKey, activeColor, inactiveColor = '#334155') => {
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
     const isActive = activeKey === regionKey || (isMultiple && regionKey !== 'Unknown');
     
     // Map region to active gradient ID
@@ -65,6 +69,7 @@ const BrainRegionMap = ({ location, confidence }) => {
     return {
       className: `transition-all duration-700 ease-in-out ${
         isActive 
+<<<<<<< HEAD
           ? 'animate-pulse opacity-100' 
           : 'opacity-10'
       }`,
@@ -73,6 +78,15 @@ const BrainRegionMap = ({ location, confidence }) => {
       strokeWidth: isActive ? 2.5 : 1,
       strokeDasharray: isActive ? 'none' : '3,3',
       filter: isActive ? 'url(#glow)' : 'none'
+=======
+          ? 'animate-pulse drop-shadow-[0_0_8px_rgba(239,68,68,0.7)] opacity-100' 
+          : 'opacity-10'
+      }`,
+      fill: isActive ? activeColor : 'none',
+      stroke: isActive ? '#ef4444' : inactiveColor,
+      strokeWidth: isActive ? 2.5 : 1,
+      strokeDasharray: isActive ? 'none' : '3,3'
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
     };
   };
 
@@ -119,6 +133,7 @@ const BrainRegionMap = ({ location, confidence }) => {
             </filter>
           </defs>
 
+<<<<<<< HEAD
           {/* Subtle stereotactic surgical grid background */}
           <g id="grid" className="opacity-15">
             <circle cx="240" cy="110" r="40" fill="none" stroke="#475569" strokeWidth="0.5" strokeDasharray="2,4" />
@@ -138,15 +153,31 @@ const BrainRegionMap = ({ location, confidence }) => {
             
             {/* Dura Mater Layer */}
             <ellipse cx="240" cy="110" rx="150" ry="90" fill="none" stroke="#475569" strokeWidth="1" strokeDasharray="5,3" className="opacity-55" />
+=======
+          {/* Base Anatomical Structure (Always visible in background) */}
+          <g id="base-anatomy">
+            {/* Skull Bone Outer ring */}
+            <ellipse cx="240" cy="110" rx="160" ry="100" fill="#0f172a" stroke="#334155" strokeWidth="4" className="opacity-90" />
+            
+            {/* Dura Mater Layer */}
+            <ellipse cx="240" cy="110" rx="153" ry="93" fill="none" stroke="#475569" strokeWidth="1" className="opacity-60" />
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
             
             {/* Brain Parenchyma (Wavy hemispheres) */}
             <path
               d="M 240,44 C 220,44 215,48 205,48 C 195,48 190,44 180,46 C 170,48 165,54 158,58 C 151,62 145,62 140,68 C 135,74 136,82 132,90 C 128,98 124,102 124,110 C 124,118 128,122 132,130 C 136,138 135,146 140,152 C 145,158 151,158 158,162 C 165,166 170,172 180,174 C 190,176 195,172 205,172 C 215,172 220,176 240,176 C 260,176 265,172 275,172 C 285,172 290,176 300,174 C 310,172 315,166 322,162 C 329,158 335,158 340,152 C 345,146 344,138 348,130 C 352,122 356,118 356,110 C 356,102 352,98 348,90 C 344,82 345,74 340,68 C 335,62 329,62 322,58 C 315,54 310,48 300,46 C 290,44 285,48 275,48 C 265,48 260,44 240,44 Z"
               fill="#1e293b"
+<<<<<<< HEAD
               fillOpacity="0.45"
               stroke="#475569"
               strokeWidth="1.5"
               className="opacity-80"
+=======
+              fillOpacity="0.4"
+              stroke="#475569"
+              strokeWidth="1.5"
+              className="opacity-70"
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
             />
             
             {/* Longitudinal Fissure Divider */}
@@ -155,15 +186,23 @@ const BrainRegionMap = ({ location, confidence }) => {
             {/* Ventricles (Symmetric lateral ventricles in center) */}
             <path 
               d="M 230,110 C 220,100 220,85 235,90 C 235,98 238,105 238,110 C 238,115 235,122 235,130 C 220,135 220,120 230,110 Z M 250,110 C 260,100 260,85 245,90 C 245,98 242,105 242,110 C 242,115 245,122 245,130 C 260,135 260,120 250,110 Z" 
+<<<<<<< HEAD
               fill="#080c14" 
               stroke="#334155" 
               strokeWidth="1" 
               className="opacity-90" 
+=======
+              fill="#0f172a" 
+              stroke="#334155" 
+              strokeWidth="1" 
+              className="opacity-80" 
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
             />
           </g>
 
           {/* Pathological Bleeds (Interactive overlays) */}
           <g id="pathology-layers">
+<<<<<<< HEAD
             {/* Epidural Hematoma (Biconvex lens shape on the left edge now) */}
             <path
               d="M 112,80 C 90,110 90,120 112,150 C 128,130 128,100 112,80 Z"
@@ -198,10 +237,37 @@ const BrainRegionMap = ({ location, confidence }) => {
             <path
               d="M 270,125 C 265,115 280,105 290,112 C 300,110 305,125 295,135 C 290,145 275,140 270,125 Z"
               {...getBleedProps('Intracerebral Hemorrhage')}
+=======
+            {/* Epidural Hematoma (Biconvex lens shape on the right edge) */}
+            <path
+              d="M 368,80 C 390,110 390,120 368,150 C 352,130 352,100 368,80 Z"
+              {...getBleedProps('Epidural Hematoma', 'url(#activeGrad)')}
+            />
+            
+            {/* Subdural Hematoma (Crescent shape on the left edge) */}
+            <path
+              d="M 112,65 C 80,95 80,135 112,165 C 100,145 100,85 112,65 Z"
+              {...getBleedProps('Subdural Hematoma', 'url(#activeGrad)')}
+            />
+            
+            {/* Subarachnoid Hemorrhage (CSF-space sulcal and cistern bleed lines) */}
+            <path
+              d="M 240,44 L 240,90 M 240,130 L 240,176 M 205,48 C 210,65 200,80 220,95 M 275,48 C 270,65 280,80 260,95 M 132,110 L 175,110 M 348,110 L 305,110"
+              {...getBleedProps('Subarachnoid Hemorrhage', 'none', '#eab308')}
+              stroke={activeKey === 'Subarachnoid Hemorrhage' ? '#f59e0b' : '#334155'}
+              strokeWidth={activeKey === 'Subarachnoid Hemorrhage' ? 3.0 : 1}
+            />
+            
+            {/* Intracerebral Hemorrhage (Focal lobulated intraparenchymal bleed) */}
+            <path
+              d="M 270,125 C 265,115 280,105 290,112 C 300,110 305,125 295,135 C 290,145 275,140 270,125 Z"
+              {...getBleedProps('Intracerebral Hemorrhage', 'url(#activeGrad)')}
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
             />
           </g>
 
           {/* Landscape indicator lines & labels pointing to specific anatomical bleed locations */}
+<<<<<<< HEAD
           <g id="labels" className="text-[8px] font-extrabold uppercase tracking-wider">
             {/* Epidural Space (1) */}
             {(() => {
@@ -286,6 +352,28 @@ const BrainRegionMap = ({ location, confidence }) => {
                 </g>
               );
             })()}
+=======
+          <g id="labels" className="text-[8px] fill-slate-400 font-extrabold uppercase tracking-wider">
+            {/* Epidural Space (top left - points to right edge hematoma) */}
+            <text x="460" y="45" textAnchor="end">1. Epidural Space (Biconvex)</text>
+            <line x1="340" y1="45" x2="370" y2="105" stroke="#ef4444" strokeWidth="1" strokeDasharray="2,2" className="opacity-50" />
+            <circle cx="370" cy="105" r="2" fill="#ef4444" />
+
+            {/* Subdural Space (top right - points to left edge hematoma) */}
+            <text x="20" y="45" textAnchor="start">2. Subdural Space (Crescent)</text>
+            <line x1="140" y1="45" x2="105" y2="105" stroke="#f97316" strokeWidth="1" strokeDasharray="2,2" className="opacity-50" />
+            <circle cx="105" cy="105" r="2" fill="#f97316" />
+
+            {/* Subarachnoid Space (bottom left - points to central cistern / sulcal lines) */}
+            <text x="20" y="185" textAnchor="start">3. Subarachnoid Space (CSF)</text>
+            <line x1="150" y1="185" x2="210" y2="140" stroke="#fbbf24" strokeWidth="1" strokeDasharray="2,2" className="opacity-50" />
+            <circle cx="210" cy="140" r="2" fill="#fbbf24" />
+
+            {/* Intracerebral Space (bottom right - points to inner parenchyma hematoma) */}
+            <text x="460" y="185" textAnchor="end">4. Intracerebral Tissue</text>
+            <line x1="340" y1="185" x2="285" y2="125" stroke="#a78bfa" strokeWidth="1" strokeDasharray="2,2" className="opacity-50" />
+            <circle cx="285" cy="125" r="2" fill="#a78bfa" />
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
           </g>
         </svg>
 

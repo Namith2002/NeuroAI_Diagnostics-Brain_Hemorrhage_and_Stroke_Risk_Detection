@@ -58,12 +58,16 @@ class Report(Base):
     patient_age = Column(Integer, default=45, nullable=False)
     
     # 1. Multi-Label Hemorrhage Classification
+<<<<<<< HEAD
     prob_hemorrhage = Column(Float, default=0.0, nullable=False)
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
     prob_edh = Column(Float, default=0.0, nullable=False)
     prob_sdh = Column(Float, default=0.0, nullable=False)
     prob_sah = Column(Float, default=0.0, nullable=False)
     prob_iph = Column(Float, default=0.0, nullable=False)
     prob_ivh = Column(Float, default=0.0, nullable=False)
+<<<<<<< HEAD
     prob_fracture = Column(Float, default=0.0, nullable=False)
     
     # Clinical Assessment Engine Metrics
@@ -78,6 +82,8 @@ class Report(Base):
     ev = Column(Float, default=0.0, nullable=False)
     cp = Column(Float, default=0.0, nullable=False)
     
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
     primary_diagnosis = Column(String, nullable=True)
     secondary_diagnosis = Column(String, nullable=True)
     multilabel_matrix = Column(Text, nullable=True) # JSON string

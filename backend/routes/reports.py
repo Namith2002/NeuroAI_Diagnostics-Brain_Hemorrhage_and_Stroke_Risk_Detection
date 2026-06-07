@@ -128,12 +128,16 @@ def analyze_scan(
         patient_age=metrics.get("patient_age", 45),
         
         # New multi-task columns
+<<<<<<< HEAD
         prob_hemorrhage=metrics.get("prob_hemorrhage", 0.0),
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
         prob_edh=metrics.get("prob_edh", 0.0),
         prob_sdh=metrics.get("prob_sdh", 0.0),
         prob_sah=metrics.get("prob_sah", 0.0),
         prob_iph=metrics.get("prob_iph", 0.0),
         prob_ivh=metrics.get("prob_ivh", 0.0),
+<<<<<<< HEAD
         prob_fracture=metrics.get("prob_fracture", 0.0),
         
         # Clinical Assessment Engine Columns
@@ -148,6 +152,8 @@ def analyze_scan(
         ev=metrics.get("ev", 0.0),
         cp=metrics.get("cp", 0.0),
         
+=======
+>>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
         primary_diagnosis=metrics.get("primary_diagnosis"),
         secondary_diagnosis=metrics.get("secondary_diagnosis"),
         multilabel_matrix=metrics.get("multilabel_matrix"),
