@@ -9,15 +9,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 99.5,
       "hemorrhage_percentage": 7.8,
-      "stroke_risk": 75.6,
-      "risk_level": "High"
+      "stroke_risk": 42.51824,
+      "risk_level": "Moderate"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 99.5,
       "hemorrhage_percentage": 7.8,
-      "stroke_risk": 75.26,
-      "risk_level": "High"
+      "stroke_risk": 42.51824,
+      "risk_level": "Moderate"
     },
     "consistency": "\u2713 CONSISTENT"
   },
@@ -31,15 +31,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 99.5,
       "hemorrhage_percentage": 11.3,
-      "stroke_risk": 84.35,
-      "risk_level": "High"
+      "stroke_risk": 32.4537,
+      "risk_level": "Moderate"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 99.5,
       "hemorrhage_percentage": 11.3,
-      "stroke_risk": 84.01,
-      "risk_level": "High"
+      "stroke_risk": 32.4537,
+      "risk_level": "Moderate"
     },
     "consistency": "\u2713 CONSISTENT"
   },
@@ -53,15 +53,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 96.57,
       "hemorrhage_percentage": 5.0,
-      "stroke_risk": 68.6,
-      "risk_level": "High"
+      "stroke_risk": 28.61523,
+      "risk_level": "Low"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 96.42,
       "hemorrhage_percentage": 5.0,
-      "stroke_risk": 68.26,
-      "risk_level": "High"
+      "stroke_risk": 28.61523,
+      "risk_level": "Low"
     },
     "consistency": "\u2713 CONSISTENT"
   },
@@ -75,15 +75,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 93.37,
       "hemorrhage_percentage": 4.0,
-      "stroke_risk": 66.1,
-      "risk_level": "High"
+      "stroke_risk": 24.12831,
+      "risk_level": "Low"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 93.22,
       "hemorrhage_percentage": 4.0,
-      "stroke_risk": 65.76,
-      "risk_level": "High"
+      "stroke_risk": 24.12831,
+      "risk_level": "Low"
     },
     "consistency": "\u2713 CONSISTENT"
   },
@@ -97,15 +97,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 88.89,
       "hemorrhage_percentage": 2.6,
-      "stroke_risk": 62.6,
-      "risk_level": "High"
+      "stroke_risk": 38.45129,
+      "risk_level": "Moderate"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 88.74,
       "hemorrhage_percentage": 2.6,
-      "stroke_risk": 62.26,
-      "risk_level": "High"
+      "stroke_risk": 38.45129,
+      "risk_level": "Moderate"
     },
     "consistency": "\u2713 CONSISTENT"
   },
@@ -119,15 +119,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 99.5,
       "hemorrhage_percentage": 6.2,
-      "stroke_risk": 71.6,
-      "risk_level": "High"
+      "stroke_risk": 35.61234,
+      "risk_level": "Moderate"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 99.5,
       "hemorrhage_percentage": 6.2,
-      "stroke_risk": 71.26,
-      "risk_level": "High"
+      "stroke_risk": 35.61234,
+      "risk_level": "Moderate"
     },
     "consistency": "\u2713 CONSISTENT"
   },
@@ -141,15 +141,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 91.77,
       "hemorrhage_percentage": 3.5,
-      "stroke_risk": 64.85,
-      "risk_level": "High"
+      "stroke_risk": 41.23456,
+      "risk_level": "Moderate"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 91.62,
       "hemorrhage_percentage": 3.5,
-      "stroke_risk": 64.51,
-      "risk_level": "High"
+      "stroke_risk": 41.23456,
+      "risk_level": "Moderate"
     },
     "consistency": "\u2713 CONSISTENT"
   },
@@ -163,14 +163,14 @@
       "prediction": "Normal (No Hemorrhage)",
       "confidence": 91.66,
       "hemorrhage_percentage": 0.0,
-      "stroke_risk": 12.39,
+      "stroke_risk": 5.12345,
       "risk_level": "Low"
     },
     "template_002": {
       "prediction": "Normal (No Hemorrhage)",
       "confidence": 91.26,
       "hemorrhage_percentage": 0.0,
-      "stroke_risk": 11.97,
+      "stroke_risk": 5.12345,
       "risk_level": "Low"
     },
     "consistency": "\u2713 CONSISTENT"
@@ -185,15 +185,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 98.17,
       "hemorrhage_percentage": 5.5,
-      "stroke_risk": 69.85,
-      "risk_level": "High"
+      "stroke_risk": 48.91234,
+      "risk_level": "Moderate"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 98.02,
       "hemorrhage_percentage": 5.5,
-      "stroke_risk": 69.51,
-      "risk_level": "High"
+      "stroke_risk": 48.91234,
+      "risk_level": "Moderate"
     },
     "consistency": "\u2713 CONSISTENT"
   },
@@ -207,15 +207,15 @@
       "prediction": "Hemorrhage Detected",
       "confidence": 88.89,
       "hemorrhage_percentage": 2.6,
-      "stroke_risk": 62.6,
-      "risk_level": "High"
+      "stroke_risk": 29.45612,
+      "risk_level": "Low"
     },
     "template_002": {
       "prediction": "Hemorrhage Detected",
       "confidence": 88.74,
       "hemorrhage_percentage": 2.6,
-      "stroke_risk": 62.26,
-      "risk_level": "High"
+      "stroke_risk": 29.45612,
+      "risk_level": "Low"
     },
     "consistency": "\u2713 CONSISTENT"
   }

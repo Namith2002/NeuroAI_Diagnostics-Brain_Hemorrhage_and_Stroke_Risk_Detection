@@ -220,7 +220,6 @@ const AnalysisResult = () => {
     ].filter(item => item.value > 0);
   };
 
-<<<<<<< HEAD
   const getClassificationData = () => {
     if (!report) return [];
     const subtypes = [
@@ -279,8 +278,6 @@ const AnalysisResult = () => {
     return rows.sort((a, b) => b.confidence - a.confidence);
   };
 
-=======
->>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
   if (loading) {
     return (
       <div className="min-h-screen bg-darkBg text-slate-200 flex">
@@ -521,7 +518,6 @@ const AnalysisResult = () => {
                     </p>
                   </div>
                   
-<<<<<<< HEAD
                   <div className="w-full overflow-hidden border border-slate-800 rounded-xl bg-slate-950/40 mt-1">
                     <table className="w-full border-collapse text-left">
                       <thead>
@@ -553,7 +549,7 @@ const AnalysisResult = () => {
                               <td className="py-2.5 px-3 text-[10px] font-mono text-right text-slate-400">
                                 {row.prob.toFixed(6)}
                               </td>
-                              <td className="py-2.5 px-3 text-[10px] font-mono text-right text-slate-200 font-bold">
+                               <td className="py-2.5 px-3 text-[10px] font-mono text-right text-slate-200 font-bold">
                                 {row.confidence.toFixed(5)}
                               </td>
                             </tr>
@@ -561,26 +557,6 @@ const AnalysisResult = () => {
                         })}
                       </tbody>
                     </table>
-=======
-                  <div className="flex flex-col gap-3 mt-2">
-                    {[
-                      { label: "Epidural Hemorrhage (EDH)", val: report.prob_edh || 0.0, color: "bg-cyan-400" },
-                      { label: "Subdural Hemorrhage (SDH)", val: report.prob_sdh || 0.0, color: "bg-amber-400" },
-                      { label: "Subarachnoid Hemorrhage (SAH)", val: report.prob_sah || 0.0, color: "bg-red-400" },
-                      { label: "Intraparenchymal Hemorrhage (IPH)", val: report.prob_iph || 0.0, color: "bg-purple-400" },
-                      { label: "Intraventricular Hemorrhage (IVH)", val: report.prob_ivh || 0.0, color: "bg-emerald-400" }
-                    ].map(h => (
-                      <div key={h.label} className="flex flex-col gap-1">
-                        <div className="flex justify-between text-[10px] font-bold text-slate-300 uppercase">
-                          <span>{h.label}</span>
-                          <span>{h.val.toFixed(1)}%</span>
-                        </div>
-                        <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-                          <div className={`h-full ${h.color}`} style={{ width: `${Math.min(100, Math.max(0, h.val))}%` }}></div>
-                        </div>
-                      </div>
-                    ))}
->>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
                   </div>
 
                   <div className="mt-2 p-3 bg-slate-950/40 rounded-xl border border-panelBorder flex flex-col gap-1 text-[10px]">
@@ -702,7 +678,6 @@ const AnalysisResult = () => {
                     </p>
                   </div>
 
-<<<<<<< HEAD
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
@@ -729,24 +704,6 @@ const AnalysisResult = () => {
                         ))}
                       </tbody>
                     </table>
-=======
-                  <div className="flex flex-col gap-3">
-                    {[
-                      { label: "Ischemic Stroke Risk", val: report.ischemic_stroke_risk || (report.stroke_risk * 0.4) || 0.0, color: "bg-indigo-400" },
-                      { label: "Hemorrhagic Stroke Risk", val: report.hemorrhagic_stroke_risk || report.stroke_risk || 0.0, color: "bg-rose-400" },
-                      { label: "Recurrent Stroke Risk (Within 1 Year)", val: report.recurrent_stroke_risk || (report.stroke_risk * 0.6) || 0.0, color: "bg-purple-400" }
-                    ].map(s => (
-                      <div key={s.label} className="flex flex-col gap-1">
-                        <div className="flex justify-between text-[10px] font-bold text-slate-300 uppercase">
-                          <span>{s.label}</span>
-                          <span>{s.val.toFixed(1)}%</span>
-                        </div>
-                        <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-                          <div className={`h-full ${s.color}`} style={{ width: `${Math.min(100, Math.max(0, s.val))}%` }}></div>
-                        </div>
-                      </div>
-                    ))}
->>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
                   </div>
                 </div>
 
@@ -859,7 +816,6 @@ const AnalysisResult = () => {
 
               </div>
 
-<<<<<<< HEAD
               {/* Clinical Assessment Engine Section */}
               <div className="p-6 rounded-3xl bg-panelBg/40 border border-panelBorder flex flex-col gap-6">
                 <div>
@@ -1226,235 +1182,6 @@ const AnalysisResult = () => {
                 </div>
               </div>
 
-=======
-              {/* Epilepsy Predictor Section */}
-              <div className="p-6 rounded-3xl bg-panelBg/40 border border-panelBorder flex flex-col gap-6">
-                <div>
-                  <h3 className="text-sm font-black text-white uppercase tracking-wider mb-1 flex items-center gap-2">
-                    <MdFlashOn className="text-amber-400 animate-pulse" />
-                    Post-Hemorrhagic Epilepsy Predictor (PHE)
-                  </h3>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                    Calculate early seizure (within 7 days) and late epilepsy (long-term) probabilities
-                  </p>
-                </div>
-
-                <div className="grid lg:grid-cols-12 gap-8 items-stretch">
-                  
-                  {/* Inputs Form */}
-                  <form onSubmit={handleRecalculate} className="lg:col-span-5 flex flex-col justify-between gap-5 bg-slate-950/20 p-5 rounded-2xl border border-panelBorder/60">
-                    <div className="flex flex-col gap-4">
-                      
-                      {/* Hemorrhage Type Dropdown */}
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                          Hemorrhage Type
-                        </label>
-                        <select
-                          value={calcHemorrhageType}
-                          onChange={(e) => setCalcHemorrhageType(e.target.value)}
-                          className="w-full bg-slate-900 border border-panelBorder rounded-xl p-2.5 text-xs font-semibold text-white focus:outline-none focus:border-cyan-500"
-                        >
-                          <option value="Epidural Hematoma">Epidural Hematoma</option>
-                          <option value="Subdural Hematoma">Subdural Hematoma</option>
-                          <option value="Subarachnoid Hemorrhage">Subarachnoid Hemorrhage</option>
-                          <option value="Intracerebral Hemorrhage">Intracerebral Hemorrhage</option>
-                          <option value="Multiple">Multiple Hemorrhages</option>
-                          <option value="None">None (No Active Bleed)</option>
-                        </select>
-                      </div>
-
-                      {/* Cortical Involvement */}
-                      <div className="flex flex-col gap-3 pt-1">
-                        <label className="flex items-center gap-3 cursor-pointer group">
-                          <input
-                            type="checkbox"
-                            checked={calcCortical}
-                            onChange={(e) => setCalcCortical(e.target.checked)}
-                            className="w-4 h-4 rounded-md border-panelBorder bg-slate-900 text-cyan-500 focus:ring-0 cursor-pointer"
-                          />
-                          <div>
-                            <span className="text-xs font-bold text-slate-300 group-hover:text-white transition-colors">
-                              Cortical Involvement
-                            </span>
-                            <span className="text-[9px] text-slate-500 block">Check if bleed touches the cerebral cortex</span>
-                          </div>
-                        </label>
-                      </div>
-
-                      {/* Hemorrhage Volume */}
-                      <div className="flex flex-col gap-1.5">
-                        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
-                          <span className="text-slate-400">Hemorrhage Volume (mL)</span>
-                          <span className="text-rose-400 font-extrabold">{calcVolume} mL</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          step="0.5"
-                          value={calcVolume}
-                          onChange={(e) => setCalcVolume(parseFloat(e.target.value))}
-                          className="w-full accent-rose-500"
-                        />
-                      </div>
-
-                      {/* Midline Shift */}
-                      <div className="flex flex-col gap-1.5">
-                        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
-                          <span className="text-slate-400">Midline Shift (mm)</span>
-                          <span className="text-cyan-400 font-extrabold">{calcShift} mm</span>
-                        </div>
-                        <input
-                          type="range"
-                          min="0"
-                          max="30"
-                          step="0.5"
-                          value={calcShift}
-                          onChange={(e) => setCalcShift(parseFloat(e.target.value))}
-                          className="w-full accent-cyan-400"
-                        />
-                      </div>
-
-                      {/* Patient Age */}
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                          Patient Age
-                        </label>
-                        <input
-                          type="number"
-                          value={calcAge}
-                          onChange={(e) => setCalcAge(e.target.value)}
-                          min="0"
-                          max="120"
-                          className="w-full bg-slate-900 border border-panelBorder rounded-xl p-2.5 text-xs font-semibold text-white focus:outline-none focus:border-cyan-500 transition-colors"
-                          required
-                        />
-                      </div>
-
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={calcLoading}
-                      className="w-full py-3 rounded-xl bg-cyan-500 text-darkBg font-extrabold text-xs uppercase tracking-wider glow-btn-cyan flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
-                    >
-                      {calcLoading ? (
-                        <div className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <>
-                          <MdRefresh size={16} />
-                          Recalculate Epilepsy Risk
-                        </>
-                      )}
-                    </button>
-                  </form>
-
-                  {/* Output Display */}
-                  <div className="lg:col-span-7 flex flex-col justify-between gap-6">
-                    {calcResult ? (
-                      <div className="flex flex-col gap-5 h-full justify-between">
-                        
-                        {/* Upper segment */}
-                        <div className="p-5 rounded-2xl bg-slate-900/40 border border-panelBorder flex flex-col md:flex-row gap-6 items-center">
-                          <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
-                            <svg className="w-full h-full transform -rotate-90">
-                              <circle cx="48" cy="48" r="40" className="stroke-slate-800" strokeWidth="8" fill="transparent" />
-                              <circle
-                                cx="48"
-                                cy="48"
-                                r="40"
-                                strokeWidth="8"
-                                fill="transparent"
-                                strokeDasharray={2 * Math.PI * 40}
-                                strokeDashoffset={2 * Math.PI * 40 * (1 - calcResult.epilepsy_probability / 100)}
-                                stroke={calcResult.epilepsy_probability >= 50 ? '#ef4444' : calcResult.epilepsy_probability >= 20 ? '#f97316' : '#10b981'}
-                              />
-                            </svg>
-                            <span className="absolute text-lg font-black text-white">{calcResult.epilepsy_probability}%</span>
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1.5">
-                              <span className={`px-2 py-0.5 rounded-full text-[8px] font-extrabold uppercase border ${
-                                calcResult.risk_level === 'High' ? 'bg-red-500/10 border-red-500/30 text-rose-400' :
-                                calcResult.risk_level === 'Moderate' ? 'bg-amber-500/10 border-amber-500/30 text-orange-400' :
-                                'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                              }`}>
-                                {calcResult.risk_level} Risk Level
-                              </span>
-                              {calcResult.seizure_prophylaxis_recommended && (
-                                <span className="px-2 py-0.5 rounded-full text-[8px] font-extrabold uppercase bg-pink-500/10 border border-pink-500/30 text-pink-400">
-                                  Prophylaxis Indicated
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-slate-400 text-xs font-semibold leading-relaxed">
-                              {calcResult.clinical_explanation}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Separate Early vs Late Risk badges */}
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="p-4 rounded-xl bg-slate-900/30 border border-panelBorder/50 flex flex-col">
-                            <span className="text-[8px] text-slate-500 font-extrabold uppercase tracking-widest">Early Seizure Risk (7 Days)</span>
-                            <span className="text-xl font-black text-white mt-1">{calcResult.early_seizure_risk}%</span>
-                          </div>
-                          <div className="p-4 rounded-xl bg-slate-900/30 border border-panelBorder/50 flex flex-col">
-                            <span className="text-[8px] text-slate-500 font-extrabold uppercase tracking-widest">Late Epilepsy Risk (Long-term)</span>
-                            <span className="text-xl font-black text-white mt-1">{calcResult.late_epilepsy_risk}%</span>
-                          </div>
-                        </div>
-
-                        {/* Lower grid (chart + recommendations) */}
-                        <div className="grid md:grid-cols-2 gap-4 grow">
-                          {/* Driver Chart */}
-                          <div className="p-4 rounded-2xl bg-slate-900/30 border border-panelBorder/50 flex flex-col justify-between">
-                            <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest block mb-2">Driver Contributions</span>
-                            <div className="h-28 w-full">
-                              <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={getContributionData()} layout="vertical" margin={{ left: -15, right: 5, top: 0, bottom: 0 }}>
-                                  <XAxis type="number" stroke="#475569" fontSize={7} />
-                                  <YAxis dataKey="name" type="category" stroke="#475569" fontSize={7} width={65} />
-                                  <Tooltip contentStyle={{ backgroundColor: '#131b2e', borderColor: '#222f4d', borderRadius: '8px' }} />
-                                  <Bar dataKey="value" radius={[0, 3, 3, 0]}>
-                                    {getContributionData().map((entry, idx) => (
-                                      <Cell key={`cell-${idx}`} fill={entry.color} />
-                                    ))}
-                                  </Bar>
-                                </BarChart>
-                              </ResponsiveContainer>
-                            </div>
-                          </div>
-
-                          {/* Recs */}
-                          <div className="p-4 rounded-2xl bg-slate-900/30 border border-panelBorder/50 flex flex-col justify-between">
-                            <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest block mb-2 flex items-center gap-1">
-                              <MdSafetyDivider className="text-cyan-400" />
-                              Seizure Precautions
-                            </span>
-                            <div className="flex flex-col gap-1.5 max-h-28 overflow-y-auto pr-1">
-                              {calcResult.recommendations.map((rec, i) => (
-                                <p key={i} className="text-[10px] text-slate-400 font-semibold leading-normal">
-                                  {rec}
-                                </p>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                      </div>
-                    ) : (
-                      <div className="h-full flex items-center justify-center text-slate-500 font-semibold text-xs uppercase tracking-wider bg-slate-900/10 border border-dashed border-panelBorder rounded-2xl">
-                        Awaiting calculation trigger
-                      </div>
-                    )}
-                  </div>
-
-                </div>
-              </div>
-
->>>>>>> fe5fbb4f498c043d0b6c3ff5655b701f2254a367
             </div>
           )}
 
