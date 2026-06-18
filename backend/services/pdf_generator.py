@@ -256,8 +256,9 @@ def generate_pdf_report(report, user, output_path: str):
         pdf.cell(150, 6.5, f" {clean_pdf_text(report.doctor_notes or 'No notes provided.')}", border="RB", fill=True, ln=True)
         pdf.ln(4)
 
-    # 4. First-Aid Recommendations Section (if emergency)
-    if report.first_aid_needed or report.is_emergency:
+    # 4. First-Aid Recommendations Section (if hemorrhage)
+    is_hemorrhage = "Hemorrhage Detected" in report.prediction
+    if is_hemorrhage and report.first_aid_recommendations:
         pdf.set_font("Helvetica", "B", 11)
         pdf.set_text_color(220, 38, 38)  # Red for emergency
         sec_num = "IV" if has_review else "III"
@@ -280,7 +281,7 @@ def generate_pdf_report(report, user, output_path: str):
     sec_num_idx = 3
     if has_review:
         sec_num_idx += 1
-    if report.first_aid_needed or report.is_emergency:
+    if is_hemorrhage and report.first_aid_recommendations:
         sec_num_idx += 1
     roman_numerals = {3: "III", 4: "IV", 5: "V"}
     sec_num = roman_numerals.get(sec_num_idx, "IV")

@@ -372,6 +372,20 @@ const AnalysisResult = () => {
             </p>
           </div>
 
+          {/* Prompt First-Aid Treatment card if a hemorrhage is detected */}
+          {isHemorrhage && report.first_aid_recommendations && (
+            <div className="p-6 rounded-3xl border border-rose-500/25 bg-red-950/5">
+              <h3 className="text-sm font-black text-rose-400 uppercase tracking-wider flex items-center gap-2 mb-3">
+                <span>🚨</span> Immediate Emergency First-Aid Treatment
+              </h3>
+              <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                <pre className="text-slate-200 text-xs font-mono whitespace-pre-wrap leading-relaxed">
+                  {report.first_aid_recommendations}
+                </pre>
+              </div>
+            </div>
+          )}
+
           {/* Enhanced Metrics summary grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             
@@ -1230,7 +1244,7 @@ const AnalysisResult = () => {
               )}
 
               {/* First-Aid recommendations */}
-              {report.first_aid_needed && report.first_aid_recommendations && (
+              {(report.prediction === 'Hemorrhage Detected' || report.first_aid_needed) && report.first_aid_recommendations && (
                 <div className="p-6 rounded-2xl glass-panel border-accentRed/30 bg-red-950/10 border-2">
                   <h3 className="text-md font-extrabold text-accentRed uppercase tracking-wide mb-3 flex items-center gap-2">
                     <span>📋</span> Emergency First-Aid Recommendations

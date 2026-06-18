@@ -923,7 +923,7 @@ def analyze_brain_scan(image_path: str, heatmap_output_path: str, original_filen
     # 9. Generate Hemorrhage Distribution Graph Data
     hemorrhage_distribution = generate_hemorrhage_distribution(filtered_blood_mask, brain_mask)
     
-    first_aid_needed = is_hemorrhage and is_emergency
+    first_aid_needed = is_hemorrhage
 
     # 11. Generate hybrid Grad-CAM Heatmap
     try:
