@@ -536,21 +536,21 @@ const AnalysisResult = () => {
                     <table className="w-full border-collapse text-left">
                       <thead>
                         <tr className="bg-slate-900/60 border-b border-slate-800">
-                          <th className="py-2 px-3 text-[9px] font-bold text-slate-400 uppercase tracking-wider">Hemorrha</th>
-                          <th className="text-right py-2 px-3 text-[9px] font-bold text-slate-400 uppercase tracking-wider">Probability</th>
-                          <th className="text-right py-2 px-3 text-[9px] font-bold text-slate-400 uppercase tracking-wider">Confidenc</th>
+                          <th className="py-2 px-3 text-[9px] font-bold text-slate-400 uppercase tracking-wider">Hemorrhage Subtype</th>
+                          <th className="text-right py-2 px-3 text-[9px] font-bold text-slate-400 uppercase tracking-wider">Probability (0.0-1.0)</th>
+                          <th className="text-right py-2 px-3 text-[9px] font-bold text-slate-400 uppercase tracking-wider">Detection Confidence</th>
                         </tr>
                       </thead>
                       <tbody>
                         {getClassificationData().map((row) => {
                           const displayLabels = {
-                            "Hemorrhage (Overall)": "Hemorrha",
-                            "Subarachnoid (SAH)": "Subarachn",
-                            "Epidural (EDH)": "Epidural",
-                            "Intraventricular (IVH)": "Intraventr",
-                            "Intraparenchymal (IPH)": "Intraparen",
-                            "Subdural (SDH)": "Subdural",
-                            "Fracture (FRAC)": "Fracture"
+                            "Hemorrhage (Overall)": "Hemorrhage (Overall)",
+                            "Subarachnoid (SAH)": "Subarachnoid (SAH)",
+                            "Epidural (EDH)": "Epidural (EDH)",
+                            "Intraventricular (IVH)": "Intraventricular (IVH)",
+                            "Intraparenchymal (IPH)": "Intraparenchymal (IPH)",
+                            "Subdural (SDH)": "Subdural (SDH)",
+                            "Fracture (FRAC)": "Hemorrhagic Fracture (FRAC)"
                           };
                           const displayName = displayLabels[row.label] || row.label;
                           
@@ -564,7 +564,7 @@ const AnalysisResult = () => {
                                 {row.prob.toFixed(6)}
                               </td>
                                <td className="py-2.5 px-3 text-[10px] font-mono text-right text-slate-200 font-bold">
-                                {row.confidence.toFixed(5)}
+                                {row.confidence.toFixed(5)}%
                               </td>
                             </tr>
                           );

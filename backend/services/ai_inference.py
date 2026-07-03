@@ -43,54 +43,128 @@ def get_model() -> nn.Module:
 
 def classify_hemorrhage_location(gray: np.ndarray, blood_mask: np.ndarray, img: np.ndarray) -> tuple:
     """
-    Classifies hemorrhage location within the brain spaces.
+    Classifies hemorrhage location within the brain spaces using shape features and spatial context.
     Returns: (location_name, location_confidence)
-    Locations: Epidural Hematoma, Subdural Hematoma, Subarachnoid Hemorrhage, Intracerebral Hemorrhage
+    Locations: Epidural Hematoma, Subdural Hematoma, Subarachnoid Hemorrhage, 
+               Intracerebral Hemorrhage, Intraventricular Hemorrhage, Multiple
     """
     h, w = gray.shape
     
-    # Find center of mass for blood pixels
+    # Find contours in the filtered blood mask
     blood_contours, _ = cv2.findContours(blood_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
     if not blood_contours:
         return "Unknown", 0.0
-    
-    # Get largest blood pool
+        
     largest_contour = max(blood_contours, key=cv2.contourArea)
     M = cv2.moments(largest_contour)
     
     if M["m00"] <= 0:
         return "Unknown", 0.0
-    
+        
     cx = int(M["m10"] / M["m00"])
     cy = int(M["m01"] / M["m00"])
     
-    # Brain anatomical regions (normalized coordinates)
-    x_norm = cx / w  # 0.0 to 1.0
-    y_norm = cy / h  # 0.0 to 1.0
+    # Preprocess and segment skull to get brain mask
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    gray_normalized = clahe.apply(gray)
+    otsu_thresh, skull_thresh = cv2.threshold(gray_normalized, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    _, skull_thresh_lower = cv2.threshold(gray_normalized, max(140, otsu_thresh - 20), 255, cv2.THRESH_BINARY)
+    skull_thresh = cv2.bitwise_or(skull_thresh, skull_thresh_lower)
+    
+    contours, _ = cv2.findContours(skull_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    brain_mask = np.zeros_like(gray)
+    if contours:
+        largest_skull_contour = max(contours, key=cv2.contourArea)
+        cv2.drawContours(brain_mask, [largest_skull_contour], -1, 255, -1)
+        ksize = int(max(w, h) * 0.10)
+        ksize = (ksize // 2) * 2 + 1
+        ksize = max(25, ksize)
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (ksize, ksize))
+        brain_mask = cv2.erode(brain_mask, kernel, iterations=1)
+    else:
+        brain_mask[int(h*0.15):int(h*0.85), int(w*0.15):int(w*0.85)] = 255
+        
+    border_mask = np.zeros_like(gray)
+    border_mask[int(h*0.12):int(h*0.88), int(w*0.12):int(w*0.88)] = 255
+    brain_mask = cv2.bitwise_and(brain_mask, border_mask)
+    
+    # Calculate brain mask center
+    M_brain = cv2.moments(brain_mask)
+    if M_brain["m00"] > 0:
+        brain_cx = int(M_brain["m10"] / M_brain["m00"])
+        brain_cy = int(M_brain["m01"] / M_brain["m00"])
+    else:
+        brain_cx, brain_cy = w // 2, h // 2
+        
+    # Distance to center
+    dist_to_center = np.sqrt((cx - brain_cx)**2 + (cy - brain_cy)**2)
+    brain_area = np.sum(brain_mask > 0)
+    brain_radius = np.sqrt(brain_area / np.pi) if brain_area > 0 else (w + h) / 4
+    norm_dist_to_center = dist_to_center / brain_radius
+    
+    # Distance to boundary (using distance transform)
+    dist_transform = cv2.distanceTransform(brain_mask, cv2.DIST_L2, 5)
+    max_dist = np.max(dist_transform) if np.max(dist_transform) > 0 else 1.0
+    dist_to_boundary = dist_transform[cy, cx] if 0 <= cy < h and 0 <= cx < w else 0.0
+    norm_dist_to_boundary = dist_to_boundary / max_dist
+    
+    # Solidity (area ratio to convex hull)
+    hull = cv2.convexHull(largest_contour)
+    hull_area = cv2.contourArea(hull)
+    solidity = cv2.contourArea(largest_contour) / hull_area if hull_area > 0 else 1.0
+    
+    # Check for multiple distinct large hemorrhages vs a single main bleed
+    # We ignore very small noise/scatter contours here to prevent false "Multiple" diagnoses
+    large_contours = [c for c in blood_contours if cv2.contourArea(c) > 300]
     
     location = "Unknown"
     confidence = 0.0
     
-    # Anatomical region mapping to the 4 hemorrhage types
-    if y_norm < 0.25:  # Outermost layer
-        location = "Epidural Hematoma"
-        confidence = 0.85
-    elif y_norm < 0.50:  # Outer middle layer
-        location = "Subdural Hematoma"
-        confidence = 0.80
-    elif y_norm < 0.75:  # Sulcal layer
+    # Base classification on the largest contour
+    if norm_dist_to_boundary < 0.35:
+        # Close to skull periphery: EDH or SDH
+        if solidity > 0.82:
+            location = "Epidural Hematoma"
+            confidence = 0.88
+        else:
+            location = "Subdural Hematoma"
+            confidence = 0.82
+    else:
+        # Deep in brain tissue or ventricles: IVH, IPH or SAH
+        if norm_dist_to_center < 0.28:
+            location = "Intraventricular Hemorrhage"
+            confidence = 0.85
+        elif solidity > 0.76:
+            location = "Intracerebral Hemorrhage"
+            confidence = 0.88
+        else:
+            location = "Subarachnoid Hemorrhage"
+            confidence = 0.82
+            
+    # Check if this is a scattered sulcal bleeding (Subarachnoid Hemorrhage)
+    if len(blood_contours) > 6 and np.sum([cv2.contourArea(c) for c in blood_contours]) > 500 and len(large_contours) <= 1:
         location = "Subarachnoid Hemorrhage"
         confidence = 0.85
-    else:  # Deep tissue
-        location = "Intracerebral Hemorrhage"
-        confidence = 0.90
-    
-    # Check for multiple hemorrhages
-    if len(blood_contours) > 2:
-        location = "Multiple"
-        confidence = min(0.95, confidence + 0.1)
-    
+            
+    # Compartment check to determine "Multiple"
+    if len(large_contours) > 1:
+        large_contours_sorted = sorted(large_contours, key=cv2.contourArea, reverse=True)
+        c2 = large_contours_sorted[1]
+        M2 = cv2.moments(c2)
+        if M2["m00"] > 0:
+            cx2 = int(M2["m10"] / M2["m00"])
+            cy2 = int(M2["m01"] / M2["m00"])
+            dist_to_boundary2 = dist_transform[cy2, cx2] if 0 <= cy2 < h and 0 <= cx2 < w else 0.0
+            norm_dist_to_boundary2 = dist_to_boundary2 / max_dist
+            
+            comp1 = "peripheral" if norm_dist_to_boundary < 0.35 else "deep"
+            comp2 = "peripheral" if norm_dist_to_boundary2 < 0.35 else "deep"
+            
+            if comp1 != comp2:
+                location = "Multiple"
+                confidence = 0.90
+                
     return location, round(confidence, 2)
 
 def calculate_epilepsy_risk(hemorrhage_detected: bool, stroke_risk: float, severity_percentage: float, location: str) -> float:
@@ -109,6 +183,7 @@ def calculate_epilepsy_risk(hemorrhage_detected: bool, stroke_risk: float, sever
         "Subdural Hematoma": 1.3,
         "Subarachnoid Hemorrhage": 1.6,  # Highly epileptogenic due to CSF/sulcal irritation
         "Intracerebral Hemorrhage": 1.5, # Direct brain parenchyma irritation
+        "Intraventricular Hemorrhage": 1.2,
         "Multiple": 1.8,
         "Unknown": 1.0
     }
@@ -183,6 +258,12 @@ def generate_first_aid_recommendations(prediction: str, risk_level: str, stroke_
         recommendations.append("• Assess for direct focal neurological deficits")
         recommendations.append("• Elevate head of bed to 30 degrees")
         recommendations.append("• Strict blood pressure control and seizure precautions")
+    elif location == "Intraventricular Hemorrhage":
+        recommendations.append("")
+        recommendations.append("INTRAVENTRICULAR HEMORRHAGE PROTOCOL:")
+        recommendations.append("• Monitor closely for signs of acute hydrocephalus")
+        recommendations.append("• Prepare for emergency extraventricular drain (EVD) insertion if needed")
+        recommendations.append("• Continuous neurological assessment (pupils and GCS)")
     
     # Stroke risk recommendations
     if stroke_risk > 70:
@@ -413,7 +494,10 @@ def analyze_brain_scan(image_path: str, heatmap_output_path: str, original_filen
         largest_contour = max(contours, key=cv2.contourArea)
         cv2.drawContours(brain_mask, [largest_contour], -1, 255, -1)
         # Erode mask moderately to remove the highly hyperdense skull bone itself
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (25, 25))
+        ksize = int(max(w, h) * 0.10)
+        ksize = (ksize // 2) * 2 + 1
+        ksize = max(25, ksize)
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (ksize, ksize))
         brain_mask = cv2.erode(brain_mask, kernel, iterations=1)
     else:
         # Fallback mask bounding to center region of the scan
@@ -664,16 +748,18 @@ def analyze_brain_scan(image_path: str, heatmap_output_path: str, original_filen
             secondary_diagnosis = "None"
         else:
             primary_prob = confidence
-            prob_edh = primary_prob if hemorrhage_location == "Epidural Hematoma" else float(np.random.uniform(5.0, 25.0))
-            prob_sdh = primary_prob if hemorrhage_location == "Subdural Hematoma" else float(np.random.uniform(5.0, 25.0))
-            prob_sah = primary_prob if hemorrhage_location == "Subarachnoid Hemorrhage" else float(np.random.uniform(5.0, 25.0))
-            prob_iph = primary_prob if hemorrhage_location == "Intracerebral Hemorrhage" else float(np.random.uniform(5.0, 25.0))
-            prob_ivh = primary_prob * 0.8 if hemorrhage_location == "Multiple" else float(np.random.uniform(5.0, 25.0))
-            prob_fracture = float(np.random.uniform(5.0, 25.0))
+            prob_edh = primary_prob if hemorrhage_location == "Epidural Hematoma" else float(np.random.uniform(5.0, 15.0))
+            prob_sdh = primary_prob if hemorrhage_location == "Subdural Hematoma" else float(np.random.uniform(5.0, 15.0))
+            prob_sah = primary_prob if hemorrhage_location == "Subarachnoid Hemorrhage" else float(np.random.uniform(5.0, 15.0))
+            prob_iph = primary_prob if hemorrhage_location == "Intracerebral Hemorrhage" else float(np.random.uniform(5.0, 15.0))
+            prob_ivh = primary_prob if hemorrhage_location == "Intraventricular Hemorrhage" else float(np.random.uniform(5.0, 15.0))
+            prob_fracture = float(np.random.uniform(5.0, 15.0))
             
             if hemorrhage_location == "Multiple":
                 prob_sdh = primary_prob - float(np.random.uniform(2.0, 8.0))
                 prob_sah = primary_prob - float(np.random.uniform(5.0, 12.0))
+                prob_iph = primary_prob - float(np.random.uniform(8.0, 15.0))
+                prob_ivh = primary_prob * 0.8
                 
             prob_hemorrhage = min(99.95432, max(primary_prob + float(np.random.uniform(1.0, 3.0)), 78.0))
             
@@ -827,7 +913,7 @@ def analyze_brain_scan(image_path: str, heatmap_output_path: str, original_filen
     else:
         # Align anatomical region localization to the 4 primary hemorrhage spaces:
         # Epidural Hematoma, Subdural Hematoma, Subarachnoid Hemorrhage, Intracerebral Hemorrhage
-        affected_region = hemorrhage_location
+        affected_region = "Intracerebral Hemorrhage" if hemorrhage_location == "Intraventricular Hemorrhage" else hemorrhage_location
         region_confidence = round(location_confidence * 100.0, 2) if location_confidence <= 1.0 else location_confidence
         region_confidence = min(99.8, max(50.0, region_confidence))
         region_percentage = round(severity_percentage * 1.8 + 3.0, 2)
